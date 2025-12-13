@@ -1,0 +1,107 @@
+# 地雷經驗：目錄路徑與中文編碼問題
+
+## 發生時間
+2025-12-13
+
+## 問題描述
+在抓取考題資源時遇到兩個路徑相關問題：
+1. 目錄名稱混淆：專案中存在 step-002-抓取原始資料 和 step-002-資料抓取 兩個類似目錄
+2. curl 中文路徑錯誤：使用 curl 下載 PDF 到含中文的路徑時失敗
+
+## 錯誤訊息
+
+### 問題1：目錄建立錯誤
+- 錯誤操作：在 step-002-資料抓取/raw/ 建立 exam-resources 目錄
+- 正確目錄：step-002-抓取原始資料/raw/考題資源/
+- 結果：檔案放錯位置，需要後續手動移動
+
+### 問題2：curl 中文路徑錯誤
+```
+curl: (23) Failure writing output to destination
+Warning: Failed to open the file
+Warning: /Users/40gpu/coding_projects/taide-botrun/step-002-資料抓取/raw/�
+Warning: �題資源/114學測國語文綜合能力測驗參考答案.pdf: No such file or directory
+```
+
+## 根本原因
+
+### 問題1：未先確認專案目錄結構
+- 使用者要求路徑：/Users/40gpu/coding_projects/taide-botrun/step-002-資料抓取/raw/考題資源/
+- 實際專案路徑：/Users/40gpu/coding_projects/taide-botrun/step-002-抓取原始資料/raw/考題資源/
+- macOS 終端機 ls 顯示可能因編碼導致兩個目錄名稱看起來很像
+
+### 問題2：macOS 終端機中文路徑編碼
+- curl 無法正確處理路徑中的中文字元
+- macOS 終端機對 UTF-8 中文路徑處理有時會出現編碼問題
+- 在 bash 腳本中使用中文路徑更容易失敗
+
+## 解決方案
+
+### 問題1：確認專案目錄結構
+1. 執行前先用 ls 或 find 確認目錄結構
+```bash
+ls -d step-002-*
+find . -name "step-002-*" -type d
+```
+
+2. 比較多個類似目錄
+```bash
+ls -la "step-002-抓取原始資料/raw/"
+ls -la "step-002-資料抓取/raw/"
+```
+
+3. 發現錯誤後移動檔案
+```bash
+mv "step-002-資料抓取/raw/exam-resources"/* "step-002-抓取原始資料/raw/考題資源/"
+rmdir "step-002-資料抓取/raw/exam-resources"
+```
+
+### 問題2：避免中文路徑或使用英文檔名
+1. 目錄名稱保持中文（已建立），但檔案使用英文命名
+```bash
+curl -L -o "/path/to/考題資源/official-004-114-gsat-chinese-answer.pdf" "URL"
+```
+
+2. 或使用相對路徑並 cd 到目標目錄
+```bash
+cd "/path/to/考題資源"
+curl -L -o "official-004.pdf" "URL"
+```
+
+3. 如果必須使用中文檔名，確保路徑正確加引號
+```bash
+curl -L -o "$(printf '%s' "/path/to/考題資源/中文檔名.pdf")" "URL"
+```
+
+## 預防措施
+
+1. **任務開始前先探索目錄結構**
+   - 使用 ls、find 確認目錄名稱
+   - 檢查 git status 看是否有類似目錄
+   - 閱讀專案 README 或文件了解目錄規範
+
+2. **檔案命名規範**
+   - 優先使用英文、數字、連字號、底線
+   - 避免空格、特殊字元、中文（除非目錄已存在）
+   - 保持一致的命名慣例（如：{類別}-{編號}-{描述}.{副檔名}）
+
+3. **路徑處理最佳實踐**
+   - 所有路徑都加雙引號
+   - 使用絕對路徑避免混淆
+   - 測試小檔案後再批次處理
+
+4. **錯誤處理**
+   - 使用 && 連接指令確保前一步驟成功
+   - 下載前用 ls 確認目標目錄存在
+   - 定期 git status 檢查檔案是否在正確位置
+
+## 影響範圍
+- 影響：需要手動移動檔案並清理錯誤目錄
+- 時間成本：約 5 分鐘修正
+- 資料完整性：無影響，檔案已成功下載並移至正確位置
+
+## 參考時機
+- 在專案中建立新目錄前
+- 使用 curl/wget 下載檔案到中文路徑時
+- 遇到 "No such file or directory" 且路徑顯示亂碼時
+- 批次處理檔案前需要確認目錄結構時
