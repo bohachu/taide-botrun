@@ -1,0 +1,166 @@
+{
+  "timestamp": "2025-12-13T23:26:07.602Z",
+  "model": "google/gemma-3-12b-it",
+  "totalQuestions": 5,
+  "correct": 5,
+  "wrong": 0,
+  "error": 0,
+  "accuracy": 100,
+  "results": [
+    {
+      "questionId": "CH-001",
+      "answer": "C",
+      "reasoning": "\n答案：C\n\n理由：\n*   **A：** 「勵」行節約 (錯) → 「厲」行節約 (對)；再「厲」害也不過如此 (對)。因此，A 選項不完全正確。\n*   **B：** 「蜂」湧而至 (錯) → 「蜂」擁而至 (對)；「鋒」芒畢露 (對)。因此，B 選項不完全正確。\n*   **C：** 「賑」災濟貧 (對)；「振」聾發聵 (對)。因此，C 選項完全正確。\n*   **D：** 「弊」絕風清 (對)；「蔽」害百姓 (錯) → 「弊」害百姓 (對)。因此，D 選項不完全正確。",
+      "pattern": "P-001",
+      "knowledgeCount": 5,
+      "promptLength": 1374,
+      "rgTime": 9.839666999999999,
+      "responseTime": 1268.5490419999999,
+      "usage": {
+        "prompt_tokens": 1098,
+        "completion_tokens": 177,
+        "total_tokens": 1275,
+        "cost": 0.00005808,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": null,
+          "upstream_inference_prompt_cost": 0.00004392,
+          "upstream_inference_completions_cost": 0.00001416
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "image_tokens": 0
+        }
+      }
+    },
+    {
+      "questionId": "CH-003",
+      "answer": "D",
+      "reasoning": "答案：D\n\n理由：\nA：磬竹難書(錯)→罄竹難書(對)。因此A錯誤。\nB：貌和神離(錯)→貌合神離(對)。因此B錯誤。\nC：挺而走險(錯)→鋌而走險(對)。因此C錯誤。\nD：直接了當(異體字，但直截了當是標準)→直截了當(對)。因此D正確。",
+      "pattern": "P-002",
+      "knowledgeCount": 9,
+      "promptLength": 1914,
+      "rgTime": 16.26825000000008,
+      "responseTime": 911.2097089999997,
+      "usage": {
+        "prompt_tokens": 1553,
+        "completion_tokens": 106,
+        "total_tokens": 1659,
+        "cost": 0.0000706,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": null,
+          "upstream_inference_prompt_cost": 0.00006212,
+          "upstream_inference_completions_cost": 0.00000848
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "image_tokens": 0
+        }
+      }
+    },
+    {
+      "questionId": "LK-001",
+      "answer": "C",
+      "reasoning": "答案：C\n\n理由：知識庫中明確指出：「名稱始於朱右，流行於茅坤」。",
+      "pattern": "P-003",
+      "knowledgeCount": 3,
+      "promptLength": 1963,
+      "rgTime": 11.622624999999971,
+      "responseTime": 929.0274999999992,
+      "usage": {
+        "prompt_tokens": 1635,
+        "completion_tokens": 24,
+        "total_tokens": 1659,
+        "cost": 0.00005145,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 1634,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": null,
+          "upstream_inference_prompt_cost": 0.00004905,
+          "upstream_inference_completions_cost": 0.0000024
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "image_tokens": 0
+        }
+      }
+    },
+    {
+      "questionId": "LK-002",
+      "answer": "C",
+      "reasoning": "答案：C\n\n理由：根據「相關知識」中記載：「王粲(字仲宣)文才最高，擅長詩賦，被譽為「七子之冠冕」，王粲詩歌以抒情見長，情感真摯，號稱「兼善」。」選項C與此描述完全一致。\n",
+      "pattern": "P-004",
+      "knowledgeCount": 3,
+      "promptLength": 1979,
+      "rgTime": 13.965833999998722,
+      "responseTime": 851.6318329999995,
+      "usage": {
+        "prompt_tokens": 1652,
+        "completion_tokens": 71,
+        "total_tokens": 1723,
+        "cost": 0.00007176,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": null,
+          "upstream_inference_prompt_cost": 0.00006608,
+          "upstream_inference_completions_cost": 0.00000568
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "image_tokens": 0
+        }
+      }
+    },
+    {
+      "questionId": "LK-003",
+      "answer": "C",
+      "reasoning": "答案：C\n\n理由：知識庫指出「竹林七賢的思想傾向不完全相同；政治態度有嚴重分歧」，選項C說「七人皆主張老莊之學，「越名教而任自然」，在政治態度上完全一致」與此相悖，因此為錯誤。",
+      "pattern": "P-005",
+      "knowledgeCount": 3,
+      "promptLength": 1963,
+      "rgTime": 13.918958000000202,
+      "responseTime": 1132.5626250000005,
+      "usage": {
+        "prompt_tokens": 1628,
+        "completion_tokens": 64,
+        "total_tokens": 1692,
+        "cost": 0.00005524,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 1155,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": null,
+          "upstream_inference_prompt_cost": 0.00004884,
+          "upstream_inference_completions_cost": 0.0000064
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "image_tokens": 0
+        }
+      }
+    }
+  ]
+}

@@ -1,5 +1,5 @@
 {
-  "timestamp": "2025-12-13T15:57:20.852Z",
+  "timestamp": "2025-12-13T22:52:55.407Z",
   "questions": 5,
   "models": [
     {
@@ -7,20 +7,20 @@
       "modelName": "Gemma 3 12B IT",
       "accuracy": "40.0",
       "correctCount": 2,
-      "totalTime": 2667.511125,
-      "avgTime": 948.1758748,
+      "totalTime": 8358.762792,
+      "avgTime": 838.8140916,
       "totalInputTokens": 1143,
-      "totalOutputTokens": 390
+      "totalOutputTokens": 386
     },
     {
       "modelId": "google/gemini-3-pro-preview",
       "modelName": "Gemini 3 Pro Preview",
-      "accuracy": "20.0",
-      "correctCount": 1,
-      "totalTime": 24881.363542000003,
-      "avgTime": 4705.355250199999,
+      "accuracy": "60.0",
+      "correctCount": 3,
+      "totalTime": 116668.012208,
+      "avgTime": 4666.788516799999,
       "totalInputTokens": 1106,
-      "totalOutputTokens": 9054
+      "totalOutputTokens": 21563
     }
   ]
 }

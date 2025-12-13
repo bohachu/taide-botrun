@@ -5,10 +5,10 @@
   "correctCount": 2,
   "errorCount": 0,
   "accuracy": "40.0",
-  "totalTime": 2667.511125,
-  "avgTime": 948.1758748,
+  "totalTime": 8358.762792,
+  "avgTime": 838.8140916,
   "totalInputTokens": 1143,
-  "totalOutputTokens": 390,
+  "totalOutputTokens": 386,
   "results": [
     {
       "questionId": "CH-001",
@@ -16,24 +16,24 @@
       "correctAnswer": "C",
       "modelAnswer": "B",
       "isCorrect": false,
-      "reasoning": "理由：「蜂」和「鋒」的字形是容易混淆的，但「蜂」是蜜蜂，「鋒」是刀劍的利刃，字形結構完全不同。其他選項中，「厲」的字形有誤，「賑」和「振」的字形有誤，「弊」和「蔽」的字形有誤。",
-      "rawResponse": "\n答案：B\n理由：「蜂」和「鋒」的字形是容易混淆的，但「蜂」是蜜蜂，「鋒」是刀劍的利刃，字形結構完全不同。其他選項中，「厲」的字形有誤，「賑」和「振」的字形有誤，「弊」和「蔽」的字形有誤。",
-      "responseTime": 1101.454375,
+      "reasoning": "理由：「蜂」字是「風」字加上「虫」字組成，而「鋒」字是「夆」字加上「青」字組成，兩字字形皆正確。其他選項中，「厲」應為「勵」、「振」應為「賑」、「蔽」應為「弊」，字形皆有錯誤。",
+      "rawResponse": "\n答案：B\n理由：「蜂」字是「風」字加上「虫」字組成，而「鋒」字是「夆」字加上「青」字組成，兩字字形皆正確。其他選項中，「厲」應為「勵」、「振」應為「賑」、「蔽」應為「弊」，字形皆有錯誤。\n",
+      "responseTime": 974.777959,
       "usage": {
         "prompt_tokens": 197,
-        "completion_tokens": 82,
-        "total_tokens": 279,
-        "cost": 0.00001411,
+        "completion_tokens": 79,
+        "total_tokens": 276,
+        "cost": 0.00001381,
         "is_byok": false,
         "prompt_tokens_details": {
-          "cached_tokens": 41,
+          "cached_tokens": 5,
           "audio_tokens": 0,
           "video_tokens": 0
         },
         "cost_details": {
           "upstream_inference_cost": null,
           "upstream_inference_prompt_cost": 0.00000591,
-          "upstream_inference_completions_cost": 0.0000082
+          "upstream_inference_completions_cost": 0.0000079
         },
         "completion_tokens_details": {
           "reasoning_tokens": 0,
@@ -48,14 +48,14 @@
       "correctAnswer": "D",
       "modelAnswer": "C",
       "isCorrect": false,
-      "reasoning": "理由：成語的用字必須符合古字形或慣用字形。選項C的「鋌而走險」使用「鋌」字正確，表示「冒險」的意思；其他選項皆有用字錯誤，例如「磬竹難書」應為「罄竹難書」、「挺而走險」應為「鋌而走險」、「直接了當」應為「直截了當」。",
-      "rawResponse": "答案：C\n理由：成語的用字必須符合古字形或慣用字形。選項C的「鋌而走險」使用「鋌」字正確，表示「冒險」的意思；其他選項皆有用字錯誤，例如「磬竹難書」應為「罄竹難書」、「挺而走險」應為「鋌而走險」、「直接了當」應為「直截了當」。",
-      "responseTime": 721.5692919999999,
+      "reasoning": "理由：成語的用字必須符合古字形或慣用字形。選項C的「鋌而走險」是正確的，而其他選項都有用字錯誤的地方，例如「磬竹難書」應為「罄竹難書」、「貌和神離」應為「貌合神離」。",
+      "rawResponse": "答案：C\n理由：成語的用字必須符合古字形或慣用字形。選項C的「鋌而走險」是正確的，而其他選項都有用字錯誤的地方，例如「磬竹難書」應為「罄竹難書」、「貌和神離」應為「貌合神離」。",
+      "responseTime": 922.346,
       "usage": {
         "prompt_tokens": 180,
-        "completion_tokens": 100,
-        "total_tokens": 280,
-        "cost": 0.0000202,
+        "completion_tokens": 75,
+        "total_tokens": 255,
+        "cost": 0.00001695,
         "is_byok": false,
         "prompt_tokens_details": {
           "cached_tokens": 0,
@@ -65,7 +65,7 @@
         "cost_details": {
           "upstream_inference_cost": null,
           "upstream_inference_prompt_cost": 0.0000072,
-          "upstream_inference_completions_cost": 0.000013
+          "upstream_inference_completions_cost": 0.00000975
         },
         "completion_tokens_details": {
           "reasoning_tokens": 0,
@@ -80,14 +80,14 @@
       "correctAnswer": "C",
       "modelAnswer": "C",
       "isCorrect": true,
-      "reasoning": "理由：唐宋八大家的名稱和整理，確實是明代朱右和茅坤所為。其他選項，例如唐宋二家名單、三蘇的稱呼、以及八大家文風的描述，都有不正確的地方。",
-      "rawResponse": "\n答案：C\n理由：唐宋八大家的名稱和整理，確實是明代朱右和茅坤所為。其他選項，例如唐宋二家名單、三蘇的稱呼、以及八大家文風的描述，都有不正確的地方。",
-      "responseTime": 849.163541,
+      "reasoning": "理由：唐宋八大家的名稱和整理，確實是明代朱右和茅坤所為。其他選項，唐宋二家名單不完整，三蘇的描述正確但並非此題的重點，且八大家並非反對散文，而是以散文見長。",
+      "rawResponse": "\n答案：C\n理由：唐宋八大家的名稱和整理，確實是明代朱右和茅坤所為。其他選項，唐宋二家名單不完整，三蘇的描述正確但並非此題的重點，且八大家並非反對散文，而是以散文見長。",
+      "responseTime": 760.920166,
       "usage": {
         "prompt_tokens": 252,
-        "completion_tokens": 59,
-        "total_tokens": 311,
-        "cost": 0.0000148,
+        "completion_tokens": 71,
+        "total_tokens": 323,
+        "cost": 0.00004146,
         "is_byok": false,
         "prompt_tokens_details": {
           "cached_tokens": 0,
@@ -96,8 +96,8 @@
         },
         "cost_details": {
           "upstream_inference_cost": null,
-          "upstream_inference_prompt_cost": 0.00001008,
-          "upstream_inference_completions_cost": 0.00000472
+          "upstream_inference_prompt_cost": 0.00002016,
+          "upstream_inference_completions_cost": 0.0000213
         },
         "completion_tokens_details": {
           "reasoning_tokens": 0,
@@ -112,24 +112,24 @@
       "correctAnswer": "C",
       "modelAnswer": "A",
       "isCorrect": false,
-      "reasoning": "理由：建安七子確實是孔融、陳琳、王粲、徐幹、阮瑀、應瑒、劉楨，他們是建安文學的重要代表人物，與三曹並稱。其他選項的描述有誤，例如B的說法過於誇張，C的描述不符合王粲的風格，D的描述則與史實不符。",
-      "rawResponse": "\n答案：A\n理由：建安七子確實是孔融、陳琳、王粲、徐幹、阮瑀、應瑒、劉楨，他們是建安文學的重要代表人物，與三曹並稱。其他選項的描述有誤，例如B的說法過於誇張，C的描述不符合王粲的風格，D的描述則與史實不符。",
-      "responseTime": 1159.433583,
+      "reasoning": "理由：建安七子確實是孔融、陳琳、王粲、徐幹、阮瑀、應瑒、劉楨，他們是建安文學的重要代表人物，與三曹（曹操、曹丕、曹植）並稱。其他選項的描述皆有誤，例如B的說法不符合史實，C的描述過於誇大王粲的成就，D的描述則完全錯誤。",
+      "rawResponse": "答案：A\n理由：建安七子確實是孔融、陳琳、王粲、徐幹、阮瑀、應瑒、劉楨，他們是建安文學的重要代表人物，與三曹（曹操、曹丕、曹植）並稱。其他選項的描述皆有誤，例如B的說法不符合史實，C的描述過於誇大王粲的成就，D的描述則完全錯誤。",
+      "responseTime": 917.511292,
       "usage": {
         "prompt_tokens": 269,
-        "completion_tokens": 89,
-        "total_tokens": 358,
-        "cost": 0.00001697,
+        "completion_tokens": 98,
+        "total_tokens": 367,
+        "cost": 0.0000235,
         "is_byok": false,
         "prompt_tokens_details": {
-          "cached_tokens": 40,
+          "cached_tokens": 0,
           "audio_tokens": 0,
           "video_tokens": 0
         },
         "cost_details": {
           "upstream_inference_cost": null,
-          "upstream_inference_prompt_cost": 0.00000807,
-          "upstream_inference_completions_cost": 0.0000089
+          "upstream_inference_prompt_cost": 0.00001076,
+          "upstream_inference_completions_cost": 0.00001274
         },
         "completion_tokens_details": {
           "reasoning_tokens": 0,
@@ -144,14 +144,14 @@
       "correctAnswer": "C",
       "modelAnswer": "C",
       "isCorrect": true,
-      "reasoning": "理由：竹林七賢雖然皆受到老莊思想影響，主張任自然，但他們在政治態度上並非完全一致，有的人避官，有的人偶爾涉政。選項C將其政治態度描述為完全一致，因此錯誤。",
-      "rawResponse": "答案：C\n理由：竹林七賢雖然皆受到老莊思想影響，主張任自然，但他們在政治態度上並非完全一致，有的人避官，有的人偶爾涉政。選項C將其政治態度描述為完全一致，因此錯誤。",
-      "responseTime": 909.258583,
+      "reasoning": "理由：竹林七賢雖然皆受到老莊思想影響，主張任自然，但他們在政治態度上並非完全一致。例如，王戎曾參與官場，而嵇康則對當時的政治腐敗深感失望，因此政治態度存在差異。",
+      "rawResponse": "答案：C\n理由：竹林七賢雖然皆受到老莊思想影響，主張任自然，但他們在政治態度上並非完全一致。例如，王戎曾參與官場，而嵇康則對當時的政治腐敗深感失望，因此政治態度存在差異。",
+      "responseTime": 618.515041,
       "usage": {
         "prompt_tokens": 245,
-        "completion_tokens": 60,
-        "total_tokens": 305,
-        "cost": 0.0000176,
+        "completion_tokens": 63,
+        "total_tokens": 308,
+        "cost": 0.00001799,
         "is_byok": false,
         "prompt_tokens_details": {
           "cached_tokens": 0,
@@ -161,7 +161,7 @@
         "cost_details": {
           "upstream_inference_cost": null,
           "upstream_inference_prompt_cost": 0.0000098,
-          "upstream_inference_completions_cost": 0.0000078
+          "upstream_inference_completions_cost": 0.00000819
         },
         "completion_tokens_details": {
           "reasoning_tokens": 0,

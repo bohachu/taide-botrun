@@ -131,7 +131,7 @@ async function callOpenRouter(modelId, prompt) {
         { role: 'user', content: prompt }
       ],
       temperature: 0.1, // 低溫度以獲得更確定的答案
-      max_tokens: 2000 // 增加給推理模型足夠空間
+      max_tokens: 32000 // 給推理模型充足空間（32k tokens）
     }),
     signal: AbortSignal.timeout(CONFIG.timeout)
   });

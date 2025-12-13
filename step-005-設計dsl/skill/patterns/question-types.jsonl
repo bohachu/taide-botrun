@@ -1,0 +1,5 @@
+{"id":"P-001","type":"character-form","patterns":["字形.*正確","正確.*字形","「」內的字","形近字","錯別字"],"template_id":"T-001","knowledge_files":["character-forms.jsonl"],"description":"字形辨識題型：判斷選項中哪組字形完全正確"}
+{"id":"P-002","type":"idiom","patterns":["成語.*正確","用字.*正確","成語.*錯誤","錯別字.*成語"],"template_id":"T-002","knowledge_files":["idioms.jsonl"],"description":"成語辨識題型：判斷成語用字正確與否"}
+{"id":"P-003","type":"literature","patterns":["唐宋八大家","三蘇","韓愈.*柳宗元","古文運動"],"template_id":"T-003","knowledge_files":["literature.jsonl"],"knowledge_topics":["唐宋八大家"],"description":"唐宋八大家相關題型"}
+{"id":"P-004","type":"literature","patterns":["建安七子","三曹","王粲","典論.*論文"],"template_id":"T-003","knowledge_files":["literature.jsonl"],"knowledge_topics":["建安七子"],"description":"建安七子相關題型"}
+{"id":"P-005","type":"literature","patterns":["竹林七賢","阮籍","嵇康","山濤","魏晉"],"template_id":"T-003","knowledge_files":["literature.jsonl"],"knowledge_topics":["竹林七賢"],"description":"竹林七賢相關題型"}
