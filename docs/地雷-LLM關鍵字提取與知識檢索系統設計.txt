@@ -1,0 +1,109 @@
+# LLM 關鍵字提取與知識檢索系統設計經驗
+
+## 發生時機
+當設計使用 LLM 提取關鍵字進行知識檢索的系統時、建立 RAG (Retrieval-Augmented Generation) 架構時、使用 ripgrep 做關鍵字搜尋時
+
+## 地雷與解法
+
+### 地雷1：硬編碼關鍵字列表無法泛化
+
+問題：使用 `includes()` + 硬編碼列表（如 literatureKeywords、idiomKeywords）提取關鍵字
+
+症狀：只能處理預先定義的題目類型，新題目無法正確檢索
+
+解法：
+- 使用 LLM 提取關鍵字（多角度提取策略）
+- 設計結構化 prompt：顯性詞彙(explicit) + 隱含概念(implicit) + 對比維度(contrast)
+- 輸出 JSONL 格式便於後續處理
+- 明確禁止 LLM 判斷答案對錯（避免 overfitting）
+
+### 地雷2：rg 檢索跳過單一中文字元
+
+問題：`keyword.length < 2` 過濾掉單一中文字（如「厲」「蜂」）
+
+症狀：字形題 rg 檢索找到 0 條知識，但手動執行 rg 有結果
+
+解法：
+```javascript
+// 修正前（錯誤）
+if (keyword.length < 2) return '';
+
+// 修正後（正確）
+const hasChinese = /[\u4e00-\u9fff]/.test(keyword);
+if (!hasChinese && keyword.length < 2) return '';
+```
+
+### 地雷3：LLM 不理解題目中「／」分隔格式
+
+問題：成語題選項格式「錯誤寫法／正確寫法」，LLM 只看到後者
+
+症狀：LLM 選了 C（鋌而走險對），但沒看到前面的「挺而走險」是錯的
+
+解法：
+- 在 reasoning template 中明確說明題目格式
+- 強調「必須分別檢查兩個成語」
+- 要求輸出格式逐一分析每個選項的兩個成語
+
+### 地雷4：多個選項都正確時 LLM 選錯
+
+問題：建安七子題目 A 和 C 都正確，但正確答案是 C
+
+症狀：LLM 看到 A 符合知識庫就選了，沒有進一步分析
+
+解法：
+- 在知識庫加入「選擇題判斷要點」欄位
+- 說明「基本知識 vs 進階知識」的選擇優先級
+- 在 template 加入「多選項正確時選更核心考點」的指導
+
+## 最佳實踐
+
+### LLM 關鍵字提取 Prompt 設計
+```
+提取規則：
+1. 顯性詞彙：題目中明確出現的專有名詞
+2. 隱含概念：未直接出現但需要查證的相關知識
+3. 對比維度：選項之間需要區分的差異點
+
+禁止事項：
+- 禁止判斷選項對錯
+- 禁止推測答案
+- 禁止提取「下列」「何者」等題目指令詞
+
+輸出格式（JSONL）：
+{"category":"explicit","source":"stem","keyword":"關鍵字"}
+{"category":"implicit","source":"option_B","keyword":"隱含概念"}
+{"category":"contrast","keywords":["對比項1","對比項2"]}
+```
+
+### 知識庫設計要點
+```jsonl
+{
+  "key_facts": ["核心事實1", "核心事實2"],
+  "common_errors": ["錯誤(錯)→正確(對)"],
+  "選擇題判斷要點": "當多選項正確時的選擇指導"
+}
+```
+
+### Reasoning Template 設計
+```
+## 重要：理解題目格式
+[詳細說明選項格式，特別是分隔符號的意義]
+
+## 解題步驟
+1. 先排除明確錯誤
+2. 從剩餘選項中選最佳答案
+3. 參考知識庫的「選擇題判斷要點」
+```
+
+## 成果
+- v3 架構：LLM 提取關鍵字 + 平行 rg 檢索 + LLM 解題
+- 準確率：5/5 正確 (100%)
+- LLM 呼叫：2 次/題（提取 + 解題）
+- rg 檢索速度：20-50ms/題
+
+## 相關檔案
+- step-005-設計dsl/skill/scripts/keyword-extractor.mjs：LLM 關鍵字提取器
+- step-005-設計dsl/skill/scripts/solver.mjs：主解題腳本 v3
+- step-005-設計dsl/skill/templates/reasoning.jsonl：推理模板
+- step-005-設計dsl/skill/knowledge/*.jsonl：知識庫
+- step-005-設計dsl/designs/keyword-extraction-alternatives.md：設計方案比較

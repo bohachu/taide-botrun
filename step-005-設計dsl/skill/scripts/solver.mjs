@@ -1,13 +1,18 @@
 /**
  * solver.mjs
- * 高中國文學測解題腳本 v2
+ * 高中國文學測解題腳本 v3
  *
- * 採用上下文工程 (Context Engineering) + Promise.all 平行 rg 檢索
+ * 採用上下文工程 (Context Engineering) + LLM 關鍵字提取
  *
- * 知識檢索策略：
- * - 從題目選項提取多組關鍵字
- * - 對每個知識檔案、每組關鍵字執行 rg -C 平行檢索
- * - 結果去重 + 按相關性排序
+ * 流程（呼叫 LLM 2 次）：
+ * 1. [LLM #1] 多角度關鍵字提取（keyword-extractor.mjs）
+ * 2. [rg] 平行搜尋知識庫
+ * 3. [LLM #2] 解題推理
+ *
+ * 設計原則：BDD/TDD/SOLID/DRY
+ * - 關鍵字提取與解題分離（Single Responsibility）
+ * - 透過設定注入模型（Dependency Inversion）
+ * - 知識庫可擴充（Open/Closed）
  */
 
 import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'fs';
@@ -15,6 +20,9 @@ import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import { exec } from 'child_process';
 import { promisify } from 'util';
+
+// 引入關鍵字提取器
+import { extractKeywords as llmExtractKeywords } from './keyword-extractor.mjs';
 
 const execAsync = promisify(exec);
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -61,93 +69,24 @@ const CONFIG = {
   temperature: 0.1
 };
 
-// ======================
-// 關鍵字提取
-// ======================
-
-/**
- * 從題目提取多組關鍵字
- * @param {string} questionStem - 題幹
- * @param {Array<string>} options - 選項
- * @returns {Array<{keywords: string[], file: string}>} 關鍵字群組
- */
-function extractKeywords(questionStem, options) {
-  const groups = [];
-  const fullText = questionStem + '\n' + options.join('\n');
-
-  // 國學常識關鍵字
-  const literatureKeywords = [
-    '唐宋八大家', '三蘇', '韓愈', '柳宗元', '歐陽脩', '蘇洵', '蘇軾', '蘇轍',
-    '建安七子', '三曹', '王粲', '曹丕', '曹操', '典論',
-    '竹林七賢', '阮籍', '嵇康', '山濤', '向秀', '劉伶', '王戎', '阮咸'
-  ];
-
-  const matchedLiterature = literatureKeywords.filter(kw => fullText.includes(kw));
-  if (matchedLiterature.length > 0) {
-    groups.push({ keywords: matchedLiterature, file: 'literature.jsonl' });
-  }
-
-  // 成語關鍵字
-  const idiomKeywords = [
-    '罄竹難書', '磬竹難書', '貌合神離', '貌和神離',
-    '鋌而走險', '挺而走險', '直截了當', '直接了當',
-    '成語', '用字'
-  ];
-
-  const matchedIdiom = idiomKeywords.filter(kw => fullText.includes(kw));
-  if (matchedIdiom.length > 0) {
-    groups.push({ keywords: matchedIdiom, file: 'idioms.jsonl' });
-  }
-
-  // 字形關鍵字 - 從「」內提取
-  const charMatches = fullText.match(/「([^」])」/g) || [];
-  const chars = charMatches.map(m => m.replace(/[「」]/g, ''));
-
-  // 常見形近字組
-  const charPairs = [
-    ['厲', '勵'], ['蜂', '鋒'], ['擁', '湧'], ['賑', '振'],
-    ['弊', '蔽'], ['罄', '磬'], ['合', '和'], ['鋌', '挺'], ['截', '接']
-  ];
-
-  const matchedChars = [];
-  for (const pair of charPairs) {
-    if (pair.some(c => fullText.includes(c))) {
-      matchedChars.push(...pair);
-    }
-  }
-
-  if (matchedChars.length > 0 || chars.length > 0) {
-    groups.push({
-      keywords: [...new Set([...matchedChars, ...chars])],
-      file: 'character-forms.jsonl'
-    });
-  }
-
-  // 如果沒有匹配到任何關鍵字，對所有檔案搜尋
-  if (groups.length === 0) {
-    // 提取所有中文字詞作為關鍵字
-    const allChineseWords = fullText.match(/[\u4e00-\u9fff]{2,4}/g) || [];
-    const uniqueWords = [...new Set(allChineseWords)].slice(0, 10);
-
-    groups.push({ keywords: uniqueWords, file: 'character-forms.jsonl' });
-    groups.push({ keywords: uniqueWords, file: 'idioms.jsonl' });
-    groups.push({ keywords: uniqueWords, file: 'literature.jsonl' });
-  }
-
-  return groups;
-}
+// 知識庫檔案列表
+const KNOWLEDGE_FILES = [
+  'character-forms.jsonl',
+  'idioms.jsonl',
+  'literature.jsonl'
+];
 
 // ======================
-// 平行 rg 檢索
+// 平行 rg 檢索（泛化版本）
 // ======================
 
 /**
  * 執行單一 rg 檢索
- * @param {string} pattern - 搜尋模式
+ * @param {string} keyword - 搜尋關鍵字
  * @param {string} file - 檔案路徑
  * @returns {Promise<string>} 檢索結果
  */
-async function rgSearch(pattern, file) {
+async function rgSearch(keyword, file) {
   const filePath = join(KNOWLEDGE_DIR, file);
 
   if (!existsSync(filePath)) {
@@ -155,76 +94,58 @@ async function rgSearch(pattern, file) {
   }
 
   try {
-    // 使用 rg -C 3 保留上下文，-i 不區分大小寫
+    // 跳過純英文或數字（如 "A", "option_A"）
+    if (/^[a-zA-Z0-9_]+$/.test(keyword)) {
+      return '';
+    }
+
+    // 跳過太短的關鍵字，但允許單一中文字（字形題關鍵）
+    const hasChinese = /[\u4e00-\u9fff]/.test(keyword);
+    if (!hasChinese && keyword.length < 2) {
+      return '';
+    }
+
     const { stdout } = await execAsync(
-      `rg -C 3 -i "${pattern}" "${filePath}"`,
+      `rg -C 2 -i "${keyword}" "${filePath}"`,
       { maxBuffer: 1024 * 1024 }
     );
     return stdout;
   } catch (e) {
-    // rg 找不到匹配時會回傳非零 exit code
     return '';
   }
 }
 
 /**
- * 平行執行多組 rg 檢索
- * @param {Array<{keywords: string[], file: string}>} groups - 關鍵字群組
- * @returns {Promise<Map<string, Set<string>>>} 檔案 -> 匹配行集合
+ * 平行執行多關鍵字檢索（泛化版本）
+ * @param {Array<string>} keywords - 關鍵字陣列
+ * @returns {Promise<Array<Object>>} 知識物件陣列
  */
-async function parallelRgSearch(groups) {
+async function parallelRgSearch(keywords) {
   const searches = [];
 
-  for (const group of groups) {
-    for (const keyword of group.keywords) {
+  // 對每個關鍵字，搜尋所有知識庫檔案
+  for (const keyword of keywords) {
+    for (const file of KNOWLEDGE_FILES) {
       searches.push({
-        promise: rgSearch(keyword, group.file),
-        file: group.file,
-        keyword
+        promise: rgSearch(keyword, file),
+        keyword,
+        file
       });
     }
   }
 
-  // Promise.all 平行執行所有搜尋
+  // Promise.all 平行執行
   const results = await Promise.all(searches.map(s => s.promise));
 
-  // 合併結果，按檔案分組
-  const fileResults = new Map();
-
-  for (let i = 0; i < results.length; i++) {
-    const result = results[i];
-    const file = searches[i].file;
-
-    if (result) {
-      if (!fileResults.has(file)) {
-        fileResults.set(file, new Set());
-      }
-      // 將結果行加入集合（自動去重）
-      result.split('\n').forEach(line => {
-        if (line.trim()) {
-          fileResults.get(file).add(line);
-        }
-      });
-    }
-  }
-
-  return fileResults;
-}
-
-/**
- * 從 rg 結果解析 JSONL 物件
- * @param {Map<string, Set<string>>} fileResults - rg 結果
- * @returns {Array<Object>} 知識物件陣列
- */
-function parseRgResults(fileResults) {
-  const knowledge = [];
+  // 合併結果，去重
   const seenIds = new Set();
+  const knowledge = [];
 
-  for (const [file, lines] of fileResults) {
-    for (const line of lines) {
-      // 嘗試解析 JSON
+  for (const result of results) {
+    if (!result) continue;
+
+    for (const line of result.split('\n')) {
       try {
-        // rg 結果可能包含行號前綴，先移除
         const jsonStr = line.replace(/^\d+-/, '').replace(/^\d+:/, '');
         if (jsonStr.startsWith('{')) {
           const obj = JSON.parse(jsonStr);
@@ -243,7 +164,7 @@ function parseRgResults(fileResults) {
 }
 
 // ======================
-// 層級 1: 題型識別
+// 題型識別
 // ======================
 
 function loadJsonl(relativePath) {
@@ -275,29 +196,7 @@ function identifyQuestionType(questionStem, options) {
 }
 
 // ======================
-// 層級 2: 知識檢索（使用平行 rg）
-// ======================
-
-/**
- * 檢索相關知識（使用 Promise.all + rg）
- */
-async function retrieveKnowledge(pattern, questionStem, options) {
-  // 提取關鍵字群組
-  const keywordGroups = extractKeywords(questionStem, options);
-
-  console.log(`     關鍵字群組: ${keywordGroups.map(g => `[${g.file}: ${g.keywords.slice(0, 3).join(', ')}...]`).join(' ')}`);
-
-  // 平行 rg 檢索
-  const fileResults = await parallelRgSearch(keywordGroups);
-
-  // 解析結果
-  const knowledge = parseRgResults(fileResults);
-
-  return knowledge;
-}
-
-// ======================
-// 層級 3: 推理模板
+// 推理模板
 // ======================
 
 function formatKnowledge(item) {
@@ -318,15 +217,12 @@ function assembleContext(pattern, knowledge, questionStem, options) {
   const templates = loadJsonl('templates/reasoning.jsonl');
   const template = templates.find(t => t.id === pattern?.template_id) || templates[0];
 
-  // 格式化知識
   const knowledgeText = knowledge.length > 0
     ? knowledge.map(k => formatKnowledge(k)).join('\n\n---\n\n')
     : '（無特定知識，請根據一般國文知識作答）';
 
-  // 格式化選項
   const optionsText = options.join('\n');
 
-  // 替換模板變數
   let prompt = template.prompt_template
     .replace('{{knowledge}}', knowledgeText)
     .replace('{{question}}', questionStem)
@@ -408,33 +304,50 @@ function parseAnswer(response) {
 // 主要 API
 // ======================
 
+/**
+ * 解答單一題目（泛化版本）
+ * 呼叫 LLM 2 次：1次提取關鍵字 + 1次解題
+ */
 export async function solve(question) {
   const { question_stem, options, id } = question;
 
   console.log(`\n[${id || 'Q'}] 開始解題...`);
 
-  // 步驟 1: 題型識別
+  // 步驟 1: 題型識別（規則比對，不用 LLM）
   console.log('  1. 識別題型...');
   const pattern = identifyQuestionType(question_stem, options);
   console.log(`     題型: ${pattern?.description || '未知'}`);
 
-  // 步驟 2: 知識檢索（平行 rg）
-  console.log('  2. 平行 rg 檢索知識...');
+  // 步驟 2: LLM 提取關鍵字 [LLM #1]
+  console.log('  2. LLM 提取關鍵字...');
+  const startExtract = performance.now();
+  const extractResult = await llmExtractKeywords(question);
+  const extractTime = performance.now() - startExtract;
+  console.log(`     提取 ${extractResult.keywords.length} 個關鍵字 (${(extractTime / 1000).toFixed(2)}s)`);
+  console.log(`     關鍵字: ${extractResult.keywords.slice(0, 8).join(', ')}${extractResult.keywords.length > 8 ? '...' : ''}`);
+
+  // 步驟 3: 平行 rg 檢索知識庫
+  console.log('  3. 平行 rg 檢索知識...');
   const startRg = performance.now();
-  const knowledge = await retrieveKnowledge(pattern, question_stem, options);
+
+  // Debug: 顯示要搜尋的中文關鍵字
+  const chineseKeywords = extractResult.keywords.filter(kw => /[\u4e00-\u9fff]/.test(kw));
+  console.log(`     搜尋 ${chineseKeywords.length} 個中文關鍵字: ${chineseKeywords.slice(0, 5).join(', ')}...`);
+
+  const knowledge = await parallelRgSearch(chineseKeywords);
   const rgTime = performance.now() - startRg;
   console.log(`     找到 ${knowledge.length} 條相關知識 (${rgTime.toFixed(0)}ms)`);
 
-  // 步驟 3: 組裝上下文
-  console.log('  3. 組裝上下文...');
+  // 步驟 4: 組裝上下文
+  console.log('  4. 組裝上下文...');
   const prompt = assembleContext(pattern, knowledge, question_stem, options);
 
-  // 步驟 4: 呼叫 LLM
-  console.log('  4. 呼叫 LLM...');
+  // 步驟 5: 呼叫 LLM 解題 [LLM #2]
+  console.log('  5. LLM 解題推理...');
   const llmResponse = await callLLM(prompt);
   console.log(`     回應時間: ${(llmResponse.responseTime / 1000).toFixed(2)}s`);
 
-  // 步驟 5: 解析答案
+  // 步驟 6: 解析答案
   const parsed = parseAnswer(llmResponse.content);
   console.log(`     答案: ${parsed.answer}`);
 
@@ -443,10 +356,13 @@ export async function solve(question) {
     answer: parsed.answer,
     reasoning: parsed.reasoning,
     pattern: pattern?.id,
+    extractedKeywords: extractResult.keywords,
     knowledgeCount: knowledge.length,
     promptLength: prompt.length,
+    extractTime,
     rgTime,
     responseTime: llmResponse.responseTime,
+    totalTime: extractTime + rgTime + llmResponse.responseTime,
     usage: llmResponse.usage
   };
 }
@@ -478,8 +394,8 @@ export async function solveBatch(questions) {
 
 async function main() {
   console.log('============================================');
-  console.log('  高中國文學測解題系統 v2');
-  console.log('  (Context Engineering + 平行 rg 檢索)');
+  console.log('  高中國文學測解題系統 v3');
+  console.log('  (LLM 關鍵字提取 + 平行 rg + LLM 解題)');
   console.log('============================================');
 
   if (!CONFIG.apiKey) {
@@ -522,7 +438,7 @@ async function main() {
       console.log(`[${i + 1}] ${result.questionId}: 錯誤 (${result.reasoning.slice(0, 50)})`);
     } else if (isCorrect) {
       correct++;
-      console.log(`[${i + 1}] ${result.questionId}: ✓ 正確 (${result.answer})`);
+      console.log(`[${i + 1}] ${result.questionId}: ✓ 正確 (${result.answer}) | 關鍵字: ${result.extractedKeywords?.length || 0} | 知識: ${result.knowledgeCount}`);
     } else {
       wrong++;
       console.log(`[${i + 1}] ${result.questionId}: ✗ 錯誤 (答: ${result.answer}, 正確: ${expected})`);
@@ -533,8 +449,16 @@ async function main() {
     ? ((correct / (questions.length - error)) * 100).toFixed(1)
     : 0;
 
+  // 計算總時間
+  const totalExtractTime = results.reduce((sum, r) => sum + (r.extractTime || 0), 0);
+  const totalRgTime = results.reduce((sum, r) => sum + (r.rgTime || 0), 0);
+  const totalLLMTime = results.reduce((sum, r) => sum + (r.responseTime || 0), 0);
+
   console.log('\n============================================');
   console.log(`  統計: ${correct}/${questions.length} 正確 (${accuracy}%)`);
+  console.log(`  LLM 提取: ${(totalExtractTime / 1000).toFixed(2)}s`);
+  console.log(`  rg 檢索: ${(totalRgTime / 1000).toFixed(2)}s`);
+  console.log(`  LLM 解題: ${(totalLLMTime / 1000).toFixed(2)}s`);
   console.log('============================================');
 
   // 儲存結果
@@ -547,11 +471,17 @@ async function main() {
   writeFileSync(reportFile, JSON.stringify({
     timestamp: new Date().toISOString(),
     model: CONFIG.model,
+    version: 'v3-llm-extraction',
     totalQuestions: questions.length,
     correct,
     wrong,
     error,
     accuracy: parseFloat(accuracy),
+    timing: {
+      totalExtractTime,
+      totalRgTime,
+      totalLLMTime
+    },
     results
   }, null, 2));
 
