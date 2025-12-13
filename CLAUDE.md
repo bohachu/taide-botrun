@@ -86,3 +86,12 @@
   - 選擇經典例句（唐詩宋詞、學測常考篇章），避免爭議性例句
   - 複合修辭要完整分析，避免過度解讀
   - 本次生成30題（RH-001到RH-030），涵蓋10種修辭格，難度分布：Level 3（50%）、Level 4（43%）、Level 5（7%）
+
+### Bash 腳本與 zsh 相容性問題
+- 參考時機：撰寫 shell 腳本時、在 macOS 上執行 .sh 腳本時、看到 `declare: -A: invalid option` 或 `parse error near '('` 錯誤時、腳本執行結果與預期不符時
+- 文件位置：/Users/40gpu/coding_projects/taide-botrun/docs/地雷-Bash腳本與zsh相容性問題.txt
+- 核心要點：
+  - macOS 預設 shell 是 zsh，bash 特有語法（如 `declare -A` 關聯陣列）不支援
+  - 對於檔案處理任務，優先使用 Node.js (.mjs) 替代 shell 腳本
+  - 如必須用 shell，保持腳本簡單，使用 `#!/bin/bash` 並以 `bash script.sh` 執行
+  - 建立診斷腳本先確認資料狀態，再執行合併等操作

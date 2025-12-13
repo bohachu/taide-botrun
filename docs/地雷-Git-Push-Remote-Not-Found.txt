@@ -1,0 +1,90 @@
+# Git Push Remote Not Found 地雷經驗
+
+## 參考時機
+- 當執行 `git push` 時看到 "Repository not found" 錯誤
+- 當 git remote 配置看起來正確但無法推送時
+- 當需要確認 GitHub repository 是否存在時
+
+## 問題現象
+```
+remote: Repository not found.
+fatal: repository 'https://github.com/40843245/taide-botrun.git/' not found
+```
+
+## 可能原因
+1. GitHub repository 尚未建立
+2. Repository 名稱錯誤
+3. GitHub 權限問題（private repo 需要認證）
+4. GitHub token 過期或無效
+
+## 解決方案
+
+### 1. 確認 repository 是否存在
+- 在瀏覽器開啟 https://github.com/40843245/taide-botrun
+- 如果顯示 404，則需要先在 GitHub 上建立 repository
+
+### 2. 在 GitHub 上建立 repository
+```bash
+# 方法一：使用 GitHub CLI
+gh repo create 40843245/taide-botrun --public --source=. --remote=origin
+
+# 方法二：手動在 GitHub 網站建立
+# 1. 前往 https://github.com/new
+# 2. 填寫 Repository name: taide-botrun
+# 3. 選擇 Public 或 Private
+# 4. 不要勾選 "Initialize this repository with a README"（因為本地已有內容）
+# 5. 點擊 "Create repository"
+```
+
+### 3. 重新設定 remote（如果名稱錯誤）
+```bash
+# 檢查 remote
+git remote -v
+
+# 移除舊的 remote
+git remote remove origin
+
+# 新增正確的 remote
+git remote add origin https://github.com/使用者名稱/repo名稱.git
+
+# 推送並設定 upstream
+git push -u origin main
+```
+
+### 4. 處理權限問題
+```bash
+# 如果是 private repo，使用 SSH 或 Personal Access Token
+# SSH 方式（推薦）
+git remote set-url origin git@github.com:使用者名稱/repo名稱.git
+
+# Personal Access Token 方式
+git remote set-url origin https://TOKEN@github.com/使用者名稱/repo名稱.git
+```
+
+## 本次經驗
+- 日期：2025-12-13
+- 專案：taide-botrun
+- 狀況：本地 commit 成功，但 push 失敗
+- 原因：GitHub repository 可能尚未建立
+- 處理：已記錄 commit，待使用者建立 repository 後再 push
+
+## 注意事項
+1. 在執行 `git push` 前，先確認 GitHub repository 已建立
+2. 使用 HTTPS 推送 private repo 時需要 Personal Access Token
+3. 使用 SSH 方式可以避免每次輸入密碼
+4. 本地 commit 已成功，資料不會遺失，只是尚未推送到遠端
+
+## 相關指令
+```bash
+# 檢查 remote 配置
+git remote -v
+
+# 檢查本地 commit 歷史
+git log --oneline -5
+
+# 檢查本地是否有未推送的 commit
+git status
+
+# 使用 GitHub CLI 檢查 repo 是否存在
+gh repo view 使用者名稱/repo名稱
+```

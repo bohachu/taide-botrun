@@ -1,0 +1,51 @@
+# 地雷：Bash 腳本與 zsh 相容性問題
+
+## 問題描述
+在 macOS 上使用 bash 腳本合併 JSONL 檔案時，遇到以下錯誤：
+1. `declare: -A: invalid option` - zsh 不支援 bash 的關聯陣列語法
+2. `parse error near '('` - zsh 的 for loop 語法與 bash 不同
+3. 腳本執行結果不正確（合併後行數錯誤）
+
+## 根本原因
+1. macOS 預設 shell 是 zsh，不是 bash
+2. bash 特有語法（如 `declare -A` 關聯陣列）在 zsh 不支援
+3. 複雜的 shell 腳本在不同 shell 間可能有不同行為
+
+## 解決方案
+
+### 方案一：改用 Node.js（推薦）
+使用 .mjs 腳本替代 .sh 腳本：
+- 跨平台相容性佳
+- 語法一致性高
+- 更好的錯誤處理
+- 更容易 debug
+
+範例：
+```javascript
+// merge-questions.mjs
+import { readdir, readFile, writeFile } from 'fs/promises';
+// ... 使用 Node.js fs API 處理檔案
+```
+
+### 方案二：明確指定 bash
+在腳本開頭使用：
+```bash
+#!/bin/bash
+```
+並確保執行時使用：`bash script.sh` 而非 `./script.sh`
+
+### 方案三：使用 zsh 相容語法
+- 關聯陣列：使用 `typeset -A` 替代 `declare -A`
+- 避免複雜的字串處理，改用 `sed` 或 `awk`
+
+## 建議做法
+1. 對於檔案處理任務，優先使用 Node.js (.mjs)
+2. 如必須用 shell，保持腳本簡單，避免 bash 特有功能
+3. 建立診斷腳本（如 diagnose-jsonl.mjs）先確認資料狀態
+
+## 相關檔案
+- /Users/40gpu/coding_projects/taide-botrun/step-003-生成提問/diagnose-jsonl.mjs
+- /Users/40gpu/coding_projects/taide-botrun/step-003-生成提問/merge-questions.mjs
+
+## 記錄時間
+2025-12-13
