@@ -49,10 +49,10 @@ const CONFIG = {
   apiKey: process.env.OPENROUTER_API_KEY,
   baseUrl: 'https://openrouter.ai/api/v1/chat/completions',
   models: [
-    { id: 'google/gemma-3-12b-it:free', name: 'Gemma 3 12B IT (Free)' },
-    { id: 'google/gemini-2.0-flash-001', name: 'Gemini 2.0 Flash' }
+    { id: 'google/gemma-3-12b-it', name: 'Gemma 3 12B IT' },
+    { id: 'google/gemini-3-pro-preview', name: 'Gemini 3 Pro Preview' }
   ],
-  timeout: 60000, // 60 秒
+  timeout: 120000, // 120 秒
   maxRetries: 2
 };
 
@@ -131,7 +131,7 @@ async function callOpenRouter(modelId, prompt) {
         { role: 'user', content: prompt }
       ],
       temperature: 0.1, // 低溫度以獲得更確定的答案
-      max_tokens: 500
+      max_tokens: 2000 // 增加給推理模型足夠空間
     }),
     signal: AbortSignal.timeout(CONFIG.timeout)
   });
@@ -146,8 +146,17 @@ async function callOpenRouter(modelId, prompt) {
 
   const data = await response.json();
 
+  // 取得回應內容（支援推理模型的 reasoning 欄位）
+  let content = data.choices?.[0]?.message?.content || '';
+  const reasoning = data.choices?.[0]?.message?.reasoning || '';
+
+  // 如果 content 為空但有 reasoning，從 reasoning 中提取
+  if (!content && reasoning) {
+    content = reasoning;
+  }
+
   return {
-    content: data.choices?.[0]?.message?.content || '',
+    content,
     usage: data.usage || { prompt_tokens: 0, completion_tokens: 0, total_tokens: 0 },
     responseTime,
     model: modelId
@@ -248,7 +257,7 @@ async function testSingleQuestion(question, modelId) {
 }
 
 /**
- * 對所有題目進行測試
+ * 對所有題目進行平行測試
  * @param {Array<Object>} questions - 題目陣列
  * @param {string} modelId - 模型 ID
  * @param {string} modelName - 模型名稱
@@ -256,34 +265,31 @@ async function testSingleQuestion(question, modelId) {
  */
 async function testAllQuestions(questions, modelId, modelName) {
   console.log(`\n=== 測試模型: ${modelName} ===`);
-  console.log(`模型 ID: ${modelId}\n`);
+  console.log(`模型 ID: ${modelId}`);
+  console.log(`平行測試 ${questions.length} 題...\n`);
 
-  const results = [];
+  // 平行執行所有題目測試
+  const startTime = performance.now();
+  const results = await Promise.all(
+    questions.map(q => testSingleQuestion(q, modelId))
+  );
+  const endTime = performance.now();
 
-  for (let i = 0; i < questions.length; i++) {
-    const q = questions[i];
-    console.log(`[${i + 1}/${questions.length}] 測試題目 ${q.id}...`);
-
-    const result = await testSingleQuestion(q, modelId);
-    results.push(result);
-
+  // 顯示結果
+  results.forEach((result, i) => {
     const status = result.error ? '錯誤' : (result.isCorrect ? '✓ 正確' : '✗ 錯誤');
-    console.log(`  ${status} | 答案: ${result.modelAnswer} (正確: ${result.correctAnswer})`);
-    console.log(`  回應時間: ${(result.responseTime / 1000).toFixed(2)}s`);
-    console.log(`  Token: 輸入 ${result.usage.prompt_tokens}, 輸出 ${result.usage.completion_tokens}\n`);
-
-    // 避免 rate limit
-    if (i < questions.length - 1) {
-      await new Promise(r => setTimeout(r, 1000));
-    }
-  }
+    console.log(`[${i + 1}] ${result.questionId}: ${status} | 答案: ${result.modelAnswer} (正確: ${result.correctAnswer}) | ${(result.responseTime / 1000).toFixed(2)}s`);
+  });
 
   // 計算統計
   const correctCount = results.filter(r => r.isCorrect && !r.error).length;
   const errorCount = results.filter(r => r.error).length;
-  const totalTime = results.reduce((sum, r) => sum + r.responseTime, 0);
+  const totalTime = endTime - startTime; // 實際平行執行時間
+  const sumResponseTime = results.reduce((sum, r) => sum + r.responseTime, 0);
   const totalInputTokens = results.reduce((sum, r) => sum + r.usage.prompt_tokens, 0);
   const totalOutputTokens = results.reduce((sum, r) => sum + r.usage.completion_tokens, 0);
+
+  console.log(`\n統計: ${correctCount}/${questions.length} 正確 | 總耗時: ${(totalTime / 1000).toFixed(2)}s`);
 
   return {
     modelId,
@@ -293,7 +299,7 @@ async function testAllQuestions(questions, modelId, modelName) {
     errorCount,
     accuracy: ((correctCount / (questions.length - errorCount)) * 100).toFixed(1),
     totalTime,
-    avgTime: totalTime / questions.length,
+    avgTime: sumResponseTime / questions.length,
     totalInputTokens,
     totalOutputTokens,
     results
@@ -412,27 +418,32 @@ async function main() {
   const questions = loadVerifiedQuestions();
   console.log(`   共 ${questions.length} 題\n`);
 
-  // 測試各模型
-  const summaries = [];
+  // 平行測試所有模型
+  console.log('2. 平行測試所有模型...');
+  const summaries = await Promise.all(
+    CONFIG.models.map(async (model) => {
+      try {
+        const summary = await testAllQuestions(questions, model.id, model.name);
 
-  for (const model of CONFIG.models) {
-    try {
-      const summary = await testAllQuestions(questions, model.id, model.name);
-      summaries.push(summary);
+        // 輸出單一模型結果
+        const resultFile = join(__dirname, `../reports/result-${model.id.replace(/[/:]/g, '_')}.json`);
+        writeFileSync(resultFile, JSON.stringify(summary, null, 2), 'utf-8');
+        console.log(`已儲存: ${resultFile}`);
 
-      // 輸出單一模型結果
-      const resultFile = join(__dirname, `../reports/result-${model.id.replace(/[/:]/g, '_')}.json`);
-      writeFileSync(resultFile, JSON.stringify(summary, null, 2), 'utf-8');
-      console.log(`已儲存: ${resultFile}\n`);
+        return summary;
+      } catch (error) {
+        console.error(`模型 ${model.name} 測試失敗:`, error.message);
+        return null;
+      }
+    })
+  );
 
-    } catch (error) {
-      console.error(`模型 ${model.name} 測試失敗:`, error.message);
-    }
-  }
+  // 過濾失敗的測試
+  const validSummaries = summaries.filter(Boolean);
 
   // 生成報告
-  console.log('\n2. 生成測試報告...');
-  const report = generateReport(summaries, questions);
+  console.log('\n3. 生成測試報告...');
+  const report = generateReport(validSummaries, questions);
   const reportFile = join(__dirname, '../reports/baseline-report.md');
   writeFileSync(reportFile, report, 'utf-8');
   console.log(`已儲存: ${reportFile}`);
@@ -441,7 +452,7 @@ async function main() {
   const jsonSummary = {
     timestamp: new Date().toISOString(),
     questions: questions.length,
-    models: summaries.map(s => ({
+    models: validSummaries.map(s => ({
       modelId: s.modelId,
       modelName: s.modelName,
       accuracy: s.accuracy,
@@ -460,7 +471,7 @@ async function main() {
   console.log('\n============================================');
   console.log('  測試完成摘要');
   console.log('============================================');
-  for (const s of summaries) {
+  for (const s of validSummaries) {
     console.log(`\n${s.modelName}:`);
     console.log(`  正確率: ${s.accuracy}% (${s.correctCount}/${s.totalQuestions})`);
     console.log(`  平均回應時間: ${(s.avgTime / 1000).toFixed(2)} 秒`);
