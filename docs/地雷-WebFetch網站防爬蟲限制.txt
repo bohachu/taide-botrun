@@ -1,0 +1,92 @@
+# 地雷經驗：WebFetch 網站防爬蟲與內容限制
+
+## 發生時間
+2025-12-13
+
+## 問題描述
+使用 WebFetch 工具抓取作文評分資源時，遇到兩種類型的失敗：
+1. **403 Forbidden 錯誤**：Medium 網站回傳 403，拒絕存取
+2. **size calculation error**：AmazingTalker 網站回傳大小計算錯誤
+
+## 根本原因
+
+### 1. 防爬蟲機制（403 Forbidden）
+- 部分網站（如 Medium）有防爬蟲保護機制
+- WebFetch 工具的請求會被識別為機器人並拒絕
+- 這類網站通常需要特定的 User-Agent、Cookie 或其他驗證機制
+
+### 2. 內容大小或格式問題（size calculation error）
+- 網頁內容可能過大，超過 WebFetch 處理限制
+- 網頁結構特殊（如大量 JavaScript、動態載入內容）導致計算錯誤
+- 網頁包含大量媒體檔案或嵌入內容
+
+## 影響範圍
+- 需要抓取的 9 個網站中有 2 個失敗
+- 成功率：7/9 = 77.8%
+- 失敗的資源：
+  - https://medium.com/@yungjentsai/學測15級分台大生教你學測國寫高分技巧-9a18a9b4cd8a
+  - https://tw.amazingtalker.com/blog/zh-tw/zh-chi/71513/
+
+## 解決方案
+
+### 方案 1：使用 MCP 工具（優先）
+如果有 MCP-provided web fetch 工具，優先使用該工具，它可能有較少限制。
+
+### 方案 2：curl/wget 下載（適用於簡單防護）
+```bash
+curl -L -H "User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)" \
+  "https://example.com" -o output.html
+```
+
+### 方案 3：手動處理（最後手段）
+- 手動開啟瀏覽器複製內容
+- 使用瀏覽器開發者工具取得完整 HTML
+- 將內容儲存為檔案後用 Read 工具處理
+
+### 方案 4：建立錯誤處理機制
+```javascript
+// 偽碼示意
+try {
+  result = WebFetch(url)
+} catch (error) {
+  if (error.code === 403) {
+    // 使用方案 2 或 3
+  } else if (error.type === 'size_calculation') {
+    // 分段抓取或使用其他工具
+  }
+}
+```
+
+## 預防措施
+
+### 1. 規劃階段
+- 評估目標網站的爬蟲友善度
+- 檢查是否有 robots.txt 限制
+- 優先選擇官方、開放的資料來源
+
+### 2. 執行階段
+- 先用小樣本測試 WebFetch 是否可用
+- 準備備案方案（如 curl、手動處理）
+- 記錄失敗案例以利後續處理
+
+### 3. 資料收集策略
+- 優先使用官方 API 或開放資料集
+- 考慮使用 Selenium 等瀏覽器自動化工具
+- 尊重網站的 robots.txt 和使用條款
+
+## 經驗教訓
+
+1. **WebFetch 不是萬能的**：不是所有網站都能用 WebFetch 抓取
+2. **需要多種工具組合**：準備多種資料收集方法
+3. **評估成本效益**：對於少量資料，手動處理可能更快
+4. **記錄失敗案例**：建立清單追蹤哪些網站無法自動抓取
+
+## 參考資料
+- WebFetch 工具說明：有防爬蟲網站建議使用 MCP 工具
+- 本次任務成功率：77.8%（7/9）
+- 失敗的資源類型：Medium（付費內容平台）、AmazingTalker（教育平台）
+
+## 後續處理建議
+- 對於 Medium 文章：考慮尋找其他來源的類似內容
+- 對於 AmazingTalker：可嘗試分段抓取或手動複製
+- 建立「待手動處理」清單，集中處理特殊案例

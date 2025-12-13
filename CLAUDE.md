@@ -9,3 +9,21 @@
   - WebFetch 工具有 10 MB 檔案大小限制
   - 大型 PDF（如學測解析）需使用 curl/wget 下載後再用 Read 工具處理
   - 建立錯誤處理機制，WebFetch 失敗時自動切換下載方案
+
+### WebFetch SSL 憑證與大小計算問題
+- 參考時機：使用 WebFetch 抓取網頁時、看到 "unable to verify the first certificate" 或 "sizeCalculation return invalid" 錯誤時、批次抓取教育網站資料時、網頁包含圖片重要資訊時
+- 文件位置：/Users/40gpu/coding_projects/taide-botrun/docs/地雷-WebFetch-SSL-憑證與大小計算問題.txt
+- 核心要點：
+  - 某些網站 SSL 憑證配置不完整會導致抓取失敗
+  - 網頁內容過大或結構複雜可能觸發大小計算錯誤
+  - 重要內容若以圖片呈現無法直接提取，需查閱官方文件或其他來源
+  - 建議平行抓取多個來源，標記狀態（success/failed/partial），交叉驗證資料
+
+### WebFetch 網站防爬蟲限制（403 Forbidden）
+- 參考時機：使用 WebFetch 抓取網頁時、看到 403 Forbidden 錯誤時、抓取 Medium 等付費平台內容時、規劃批次網頁抓取策略時
+- 文件位置：/Users/40gpu/coding_projects/taide-botrun/docs/地雷-WebFetch網站防爬蟲限制.txt
+- 核心要點：
+  - Medium 等網站有防爬蟲機制會回傳 403 Forbidden，WebFetch 無法處理
+  - 優先使用 MCP web fetch 工具（較少限制），次選 curl/wget 加 User-Agent，最後手動處理
+  - 規劃階段需評估網站爬蟲友善度，準備多種資料收集方法
+  - 本次任務成功率 77.8%（7/9），需建立「待手動處理」清單處理特殊案例
