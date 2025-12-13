@@ -1,0 +1,174 @@
+{
+  "modelId": "google/gemma-3-12b-it:free",
+  "modelName": "Gemma 3 12B IT (Free)",
+  "totalQuestions": 5,
+  "correctCount": 2,
+  "errorCount": 0,
+  "accuracy": "40.0",
+  "totalTime": 19431.674875999997,
+  "avgTime": 3886.3349751999995,
+  "totalInputTokens": 1111,
+  "totalOutputTokens": 0,
+  "results": [
+    {
+      "questionId": "CH-001",
+      "model": "google/gemma-3-12b-it:free",
+      "correctAnswer": "C",
+      "modelAnswer": "B",
+      "isCorrect": false,
+      "reasoning": "理由：「蜂」和「鋒」的字形是容易混淆的，但「蜂」是蜜蜂，「鋒」是刀劍的利刃，字形都正確。「厲」、「賑」、「弊」、「蔽」等字都有寫法上的常見錯誤，例如「厲」常寫成「禮」等。",
+      "rawResponse": "答案：B\n理由：「蜂」和「鋒」的字形是容易混淆的，但「蜂」是蜜蜂，「鋒」是刀劍的利刃，字形都正確。「厲」、「賑」、「弊」、「蔽」等字都有寫法上的常見錯誤，例如「厲」常寫成「禮」等。",
+      "responseTime": 2002.5563339999999,
+      "usage": {
+        "prompt_tokens": 193,
+        "completion_tokens": 0,
+        "total_tokens": 193,
+        "cost": 0,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": null,
+          "upstream_inference_prompt_cost": 0,
+          "upstream_inference_completions_cost": 0
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "image_tokens": 0
+        }
+      },
+      "error": false
+    },
+    {
+      "questionId": "CH-003",
+      "model": "google/gemma-3-12b-it:free",
+      "correctAnswer": "D",
+      "modelAnswer": "C",
+      "isCorrect": false,
+      "reasoning": "理由：成語的用字必須符合古字形或慣用字形。選項C的「鋌而走險」是正確的，而其他選項都有用字錯誤的地方，例如「磬竹難書」應為「罄竹難書」、「貌和神離」應為「貌合神離」。",
+      "rawResponse": "答案：C\n理由：成語的用字必須符合古字形或慣用字形。選項C的「鋌而走險」是正確的，而其他選項都有用字錯誤的地方，例如「磬竹難書」應為「罄竹難書」、「貌和神離」應為「貌合神離」。",
+      "responseTime": 2332.678832999999,
+      "usage": {
+        "prompt_tokens": 173,
+        "completion_tokens": 0,
+        "total_tokens": 173,
+        "cost": 0,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": null,
+          "upstream_inference_prompt_cost": 0,
+          "upstream_inference_completions_cost": 0
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "image_tokens": 0
+        }
+      },
+      "error": false
+    },
+    {
+      "questionId": "LK-001",
+      "model": "google/gemma-3-12b-it:free",
+      "correctAnswer": "C",
+      "modelAnswer": "C",
+      "isCorrect": true,
+      "reasoning": "理由：唐宋八大家的名稱確實是明代朱右所提，茅坤的文鈔更使此稱號廣為人知。其他選項，例如宋代六家名單、三蘇的稱呼、以及八大家文風的描述，都有不正確的地方。",
+      "rawResponse": "答案：C\n理由：唐宋八大家的名稱確實是明代朱右所提，茅坤的文鈔更使此稱號廣為人知。其他選項，例如宋代六家名單、三蘇的稱呼、以及八大家文風的描述，都有不正確的地方。",
+      "responseTime": 4584.488707999999,
+      "usage": {
+        "prompt_tokens": 244,
+        "completion_tokens": 0,
+        "total_tokens": 244,
+        "cost": 0,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": null,
+          "upstream_inference_prompt_cost": 0,
+          "upstream_inference_completions_cost": 0
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "image_tokens": 0
+        }
+      },
+      "error": false
+    },
+    {
+      "questionId": "LK-002",
+      "model": "google/gemma-3-12b-it:free",
+      "correctAnswer": "C",
+      "modelAnswer": "A",
+      "isCorrect": false,
+      "reasoning": "理由：建安七子確實由孔融、陳琳、王粲、徐幹、阮瑀、應瑒、劉楨組成，且他們是建安文學的重要代表人物，與三曹並稱。其他選項的描述皆有誤，例如B的說法不符合史實，C的描述過於誇大王粲的成就，D的描述則完全錯誤。",
+      "rawResponse": "答案：A\n理由：建安七子確實由孔融、陳琳、王粲、徐幹、阮瑀、應瑒、劉楨組成，且他們是建安文學的重要代表人物，與三曹並稱。其他選項的描述皆有誤，例如B的說法不符合史實，C的描述過於誇大王粲的成就，D的描述則完全錯誤。",
+      "responseTime": 4786.995708999999,
+      "usage": {
+        "prompt_tokens": 261,
+        "completion_tokens": 0,
+        "total_tokens": 261,
+        "cost": 0,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": null,
+          "upstream_inference_prompt_cost": 0,
+          "upstream_inference_completions_cost": 0
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "image_tokens": 0
+        }
+      },
+      "error": false
+    },
+    {
+      "questionId": "LK-003",
+      "model": "google/gemma-3-12b-it:free",
+      "correctAnswer": "C",
+      "modelAnswer": "C",
+      "isCorrect": true,
+      "reasoning": "理由：竹林七賢雖然皆受到老莊思想影響，主張任自然，但他們在政治態度上並非完全一致，有的人避官，有的人偶爾涉政，因此選項C的敘述錯誤。其他選項皆為關於竹林七賢的正確描述。",
+      "rawResponse": "答案：C\n理由：竹林七賢雖然皆受到老莊思想影響，主張任自然，但他們在政治態度上並非完全一致，有的人避官，有的人偶爾涉政，因此選項C的敘述錯誤。其他選項皆為關於竹林七賢的正確描述。",
+      "responseTime": 5724.955291999999,
+      "usage": {
+        "prompt_tokens": 240,
+        "completion_tokens": 0,
+        "total_tokens": 240,
+        "cost": 0,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": null,
+          "upstream_inference_prompt_cost": 0,
+          "upstream_inference_completions_cost": 0
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "image_tokens": 0
+        }
+      },
+      "error": false
+    }
+  ]
+}
