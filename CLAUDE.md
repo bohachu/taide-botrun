@@ -56,3 +56,12 @@
   - curl 無法處理路徑中的中文字元，macOS 終端機會顯示編碼錯誤，需使用英文檔名
   - 發現目錄錯誤後用 mv 移動檔案，用 git status 確認檔案位置正確
   - 檔案命名優先使用英文、數字、連字號、底線，避免空格和特殊字元
+
+### Git 遠端倉庫未建立
+- 參考時機：執行 git push 時出現 "Repository not found" 錯誤、新專案初次推送時、git remote -v 顯示 URL 但 push 失敗時
+- 文件位置：/Users/40gpu/coding_projects/taide-botrun/docs/地雷-Git遠端倉庫未建立.txt
+- 核心要點：
+  - 本地 Git 已初始化並有 commits，但 GitHub 上尚未建立對應倉庫
+  - 遠端 URL 已設定，但倉庫實際不存在會導致 push 失敗
+  - 解決方案：(1) 在 GitHub 上手動建立倉庫；(2) 使用 `gh repo create` 自動建立；(3) 先保留本地 commit 等待手動建立
+  - 預防措施：專案開始前先建立 GitHub 倉庫，或使用 `gh repo create` 自動建立並連結

@@ -1,0 +1,57 @@
+# 地雷經驗：Git 遠端倉庫未建立
+
+## 問題現象
+執行 `git push` 時出現錯誤：
+```
+remote: Repository not found.
+fatal: repository 'https://github.com/40843245/taide-botrun.git/' not found
+```
+
+## 原因分析
+1. 本地專案已初始化 Git 並有 commits
+2. 但 GitHub 上尚未建立對應的遠端倉庫
+3. 遠端 URL 已設定，但倉庫實際不存在
+
+## 解決方案
+
+### 方案一：在 GitHub 上建立倉庫（推薦）
+1. 前往 https://github.com/new
+2. 建立名為 `taide-botrun` 的倉庫
+3. 不要初始化 README、.gitignore 或 license（避免衝突）
+4. 建立後執行：
+   ```bash
+   git push -u origin main
+   ```
+
+### 方案二：使用 GitHub CLI 建立倉庫
+```bash
+gh repo create 40843245/taide-botrun --public --source=. --remote=origin --push
+```
+
+### 方案三：先不 push，等待手動建立倉庫
+本地 commit 已成功，可以稍後再 push：
+```bash
+# 確認本地 commit 狀態
+git log --oneline -5
+
+# 等倉庫建立後再 push
+git push -u origin main
+```
+
+## 預防措施
+1. 專案開始前先建立 GitHub 倉庫
+2. 使用 `gh repo create` 自動建立並連結
+3. 檢查 `git remote -v` 確認遠端設定
+4. 嘗試 `git ls-remote origin` 測試倉庫是否存在
+
+## 本次處理
+- 本地已成功 commit（643690e）
+- 20 題文句重組題目已儲存
+- 等待 GitHub 倉庫建立後可手動 push
+- 或使用 `gh repo create` 自動建立
+
+## 發生時間
+2025-12-13
+
+## 影響範圍
+輕微（本地 commit 成功，僅需建立遠端倉庫）

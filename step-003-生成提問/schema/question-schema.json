@@ -1,0 +1,223 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "高中國文學測訓練題目 DSL Schema",
+  "description": "用於訓練 Agentic AI 的高中國文題目格式",
+  "type": "object",
+  "required": ["id", "category", "question", "answer", "reasoning"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "題目唯一識別碼，格式：{類別代碼}-{序號}",
+      "pattern": "^[A-Z]{2,4}-[0-9]{3}$"
+    },
+    "category": {
+      "type": "object",
+      "description": "題目分類",
+      "required": ["main", "sub"],
+      "properties": {
+        "main": {
+          "type": "string",
+          "enum": [
+            "語文基礎",
+            "閱讀理解",
+            "文言文",
+            "國學常識",
+            "寫作表達",
+            "跨領域閱讀"
+          ]
+        },
+        "sub": {
+          "type": "string",
+          "description": "細分類別"
+        },
+        "tags": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "額外標籤"
+        }
+      }
+    },
+    "source": {
+      "type": "object",
+      "description": "題目來源與參考",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["gsat_based", "curriculum_extended", "original"]
+        },
+        "reference_year": {
+          "type": "string",
+          "description": "參考學測年份（如有）"
+        },
+        "curriculum_topic": {
+          "type": "string",
+          "description": "課綱主題（如有）"
+        }
+      }
+    },
+    "difficulty": {
+      "type": "object",
+      "properties": {
+        "level": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 5,
+          "description": "難度等級 1-5"
+        },
+        "discrimination": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "鑑別度 0-1"
+        }
+      }
+    },
+    "question": {
+      "type": "object",
+      "required": ["stem", "type"],
+      "properties": {
+        "stem": {
+          "type": "string",
+          "description": "題幹"
+        },
+        "context": {
+          "type": "string",
+          "description": "題目情境或引文（如有）"
+        },
+        "type": {
+          "type": "string",
+          "enum": ["single_choice", "multiple_choice", "matching", "fill_blank", "essay"]
+        },
+        "options": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "label": { "type": "string" },
+              "content": { "type": "string" }
+            }
+          },
+          "description": "選項（選擇題）"
+        }
+      }
+    },
+    "answer": {
+      "type": "object",
+      "required": ["correct"],
+      "properties": {
+        "correct": {
+          "type": "string",
+          "description": "正確答案"
+        },
+        "acceptable_alternatives": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "可接受的其他答案"
+        }
+      }
+    },
+    "reasoning": {
+      "type": "object",
+      "required": ["steps", "principle"],
+      "properties": {
+        "steps": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "step_number": { "type": "integer" },
+              "action": { "type": "string" },
+              "explanation": { "type": "string" },
+              "key_point": { "type": "string" }
+            }
+          },
+          "description": "逐步推理過程"
+        },
+        "principle": {
+          "type": "string",
+          "description": "核心原理說明"
+        },
+        "knowledge_points": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "涉及的知識點"
+        }
+      }
+    },
+    "traps": {
+      "type": "array",
+      "description": "陷阱與易錯點分析",
+      "items": {
+        "type": "object",
+        "properties": {
+          "wrong_option": {
+            "type": "string",
+            "description": "錯誤選項"
+          },
+          "trap_type": {
+            "type": "string",
+            "enum": ["similar_meaning", "partial_correct", "misleading_context", "common_misconception", "homophone", "similar_character"]
+          },
+          "why_wrong": {
+            "type": "string",
+            "description": "為何是錯誤的"
+          },
+          "how_to_avoid": {
+            "type": "string",
+            "description": "如何避免此錯誤"
+          },
+          "common_mistake_rate": {
+            "type": "number",
+            "description": "預估錯誤率"
+          }
+        }
+      }
+    },
+    "learning": {
+      "type": "object",
+      "description": "學習回饋設計",
+      "properties": {
+        "if_correct": {
+          "type": "string",
+          "description": "答對時的延伸學習"
+        },
+        "if_wrong": {
+          "type": "object",
+          "properties": {
+            "feedback": { "type": "string" },
+            "review_topics": {
+              "type": "array",
+              "items": { "type": "string" }
+            },
+            "related_questions": {
+              "type": "array",
+              "items": { "type": "string" }
+            }
+          }
+        }
+      }
+    },
+    "verification": {
+      "type": "object",
+      "description": "答案驗證紀錄",
+      "properties": {
+        "verified": { "type": "boolean" },
+        "verification_source": { "type": "string" },
+        "verification_date": { "type": "string", "format": "date" },
+        "confidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        }
+      }
+    },
+    "metadata": {
+      "type": "object",
+      "properties": {
+        "created_date": { "type": "string", "format": "date" },
+        "version": { "type": "string" },
+        "author": { "type": "string" }
+      }
+    }
+  }
+}
