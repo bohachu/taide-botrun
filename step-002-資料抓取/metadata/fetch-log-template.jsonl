@@ -1,1 +1,0 @@
-{"id": "template", "url": "https://example.com", "fetched_at": "2025-12-13T00:00:00Z", "status": "success", "file_path": "raw/類別/檔案名.json", "checksum": "sha256:...", "http_status": 200, "content_type": "text/html", "last_modified": null, "etag": null, "size_bytes": 0, "notes": "說明文字"}
