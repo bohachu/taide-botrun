@@ -1,0 +1,46 @@
+# 地雷經驗：WebFetch 工具無法抓取大型 PDF 檔案
+
+## 發生時間
+2025-12-13
+
+## 問題描述
+使用 WebFetch 工具抓取翰林出版社的 PDF 檔案（https://public.ehanlin.com.tw/pre-exam/gsat/107國文解析.pdf）時，發生錯誤：
+```
+maxContentLength size of 10485760 exceeded
+```
+
+## 根本原因
+WebFetch 工具有檔案大小限制，最大允許 10485760 bytes（10 MB）。當目標 PDF 檔案超過此限制時，會直接失敗。
+
+## 解決方案
+
+### 方案 1：使用 curl/wget 下載後再處理
+```bash
+# 下載大型 PDF 檔案
+curl -o /path/to/local.pdf "https://example.com/large.pdf"
+
+# 使用 Read 工具讀取本地 PDF
+Read tool 支援讀取本地 PDF 檔案
+```
+
+### 方案 2：記錄檔案資訊但標註無法抓取
+在 JSONL 輸出中記錄該資源，但在 content 和 analysis 欄位中說明檔案大小超過限制。
+
+### 方案 3：聯絡網站管理員取得較小版本
+有些網站可能提供壓縮版本或分頁版本。
+
+## 預防措施
+1. 在使用 WebFetch 抓取 PDF 之前，先用 curl -I 檢查檔案大小
+2. 對於已知的大型資源（學測解析PDF通常都很大），優先考慮使用 curl 下載
+3. 建立錯誤處理機制，當 WebFetch 失敗時自動切換到下載方案
+
+## 影響範圍
+- 所有需要抓取大型 PDF 檔案的任務
+- 教育資源抓取（考試解析PDF通常包含大量圖片）
+- 技術文件抓取
+
+## 何時參考此文件
+- 需要使用 WebFetch 抓取 PDF 檔案時
+- 看到 "maxContentLength size exceeded" 錯誤時
+- 規劃批次抓取教育資源時
+- 建立資料收集流程時
