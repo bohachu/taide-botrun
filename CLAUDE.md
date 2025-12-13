@@ -95,3 +95,13 @@
   - 對於檔案處理任務，優先使用 Node.js (.mjs) 替代 shell 腳本
   - 如必須用 shell，保持腳本簡單，使用 `#!/bin/bash` 並以 `bash script.sh` 執行
   - 建立診斷腳本先確認資料狀態，再執行合併等操作
+
+### OpenRouter API LLM 模型測試經驗
+- 參考時機：使用 OpenRouter API 測試 LLM 時、測試模型對台灣繁體中文的理解能力時、比較不同模型在特定領域表現時、設計 LLM 測試腳本時
+- 文件位置：/Users/40gpu/coding_projects/taide-botrun/docs/地雷-OpenRouter-API-LLM測試經驗.txt
+- 核心要點：
+  - 免費模型（如 Gemma 3 12B IT :free）可能不回報完整 token 使用資訊（output_tokens=0）
+  - 文學史知識兩模型都有錯誤（建安七子題），顯示中文文學訓練不足
+  - Gemini 字形辨識較佳（2/2），Gemma 繁體字形訓練不足（0/2）
+  - 回應速度差異大：Gemini 0.76s vs Gemma 3.89s
+  - 自動生成題目必須先用網路資料驗算，假設原答案可能錯誤
