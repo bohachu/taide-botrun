@@ -29,12 +29,13 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const SKILL_ROOT = join(__dirname, '..');
 const KNOWLEDGE_DIR = join(SKILL_ROOT, 'knowledge');
 const PROMPTS_DIR = join(SKILL_ROOT, 'prompts');
+const RULES_DIR = join(SKILL_ROOT, 'rules');
 
-// 模板 ID 對應 prompt 檔案
-const TEMPLATE_TO_PROMPT = {
-  'T-001': 'reasoning-character.md',
-  'T-002': 'reasoning-idiom.md',
-  'T-003': 'reasoning-literature.md'
+// 模板 ID 對應 prompt 檔案和規則檔案
+const TEMPLATE_CONFIG = {
+  'T-001': { prompt: 'reasoning-character.md', rules: 'character.drl' },
+  'T-002': { prompt: 'reasoning-idiom.md', rules: 'idiom.drl' },
+  'T-003': { prompt: 'reasoning-literature.md', rules: 'literature.drl' }
 };
 
 // ======================
@@ -232,6 +233,21 @@ function loadPrompt(filename) {
   }
 }
 
+/**
+ * 從 .drl 檔案載入 Drools 規則
+ * @param {string} filename - rules 目錄下的檔名
+ * @returns {string} 規則內容
+ */
+function loadRules(filename) {
+  const filePath = join(RULES_DIR, filename);
+  try {
+    return readFileSync(filePath, 'utf-8').trim();
+  } catch (e) {
+    console.warn(`無法載入規則: ${filename}`);
+    return null;
+  }
+}
+
 // ======================
 // 推理模板
 // ======================
@@ -251,14 +267,19 @@ function formatKnowledge(item) {
 }
 
 function assembleContext(pattern, knowledge, questionStem, options) {
-  // 根據模板 ID 載入對應的 prompt 檔案
+  // 根據模板 ID 載入對應的 prompt 和規則檔案
   const templateId = pattern?.template_id || 'T-003';
-  const promptFile = TEMPLATE_TO_PROMPT[templateId] || 'reasoning-literature.md';
-  let promptTemplate = loadPrompt(promptFile);
+  const config = TEMPLATE_CONFIG[templateId] || TEMPLATE_CONFIG['T-003'];
 
-  // 如果載入失敗，使用預設的國學常識模板
+  let promptTemplate = loadPrompt(config.prompt);
+  let rulesContent = loadRules(config.rules);
+
+  // 如果載入失敗，使用預設模板
   if (!promptTemplate) {
     promptTemplate = loadPrompt('reasoning-literature.md');
+  }
+  if (!rulesContent) {
+    rulesContent = loadRules('literature.drl');
   }
 
   const knowledgeText = knowledge.length > 0
@@ -270,7 +291,8 @@ function assembleContext(pattern, knowledge, questionStem, options) {
   let prompt = promptTemplate
     .replace('{{knowledge}}', knowledgeText)
     .replace('{{question}}', questionStem)
-    .replace('{{options}}', optionsText);
+    .replace('{{options}}', optionsText)
+    .replace('{{rules}}', rulesContent || '');
 
   return prompt;
 }
@@ -316,10 +338,34 @@ async function callLLM(prompt) {
 }
 
 // ======================
-// 答案解析
+// 答案解析（JSONL 格式優先）
 // ======================
 
 function parseAnswer(response) {
+  // 優先嘗試解析 JSONL 格式
+  const lines = response.trim().split('\n');
+  for (const line of lines) {
+    const trimmed = line.trim();
+    if (trimmed.startsWith('{') && trimmed.includes('"answer"')) {
+      try {
+        const parsed = JSON.parse(trimmed);
+        if (parsed.answer && /^[A-D]$/.test(parsed.answer)) {
+          return {
+            answer: parsed.answer.toUpperCase(),
+            reasoning: parsed.reasoning || response,
+            analysis: parsed.analysis || null,
+            questionType: parsed.question_type || null,
+            eliminated: parsed.eliminated || [],
+            parsed: true  // 標記為成功解析 JSONL
+          };
+        }
+      } catch (e) {
+        // JSON 解析失敗，繼續嘗試其他行
+      }
+    }
+  }
+
+  // 回退：嘗試傳統文字格式（相容舊版）
   const patterns = [
     /答案[：:]\s*([A-D])/i,
     /\*\*答案\*\*[：:]\s*([A-D])/i,
@@ -333,14 +379,16 @@ function parseAnswer(response) {
     if (match) {
       return {
         answer: match[1].toUpperCase(),
-        reasoning: response
+        reasoning: response,
+        parsed: false  // 標記為回退解析
       };
     }
   }
 
   return {
     answer: 'UNKNOWN',
-    reasoning: response
+    reasoning: response,
+    parsed: false
   };
 }
 
@@ -351,49 +399,52 @@ function parseAnswer(response) {
 /**
  * 解答單一題目（泛化版本）
  * 呼叫 LLM 2 次：1次提取關鍵字 + 1次解題
+ * @param {Object} question - 題目物件
+ * @param {Object} options - 選項 { quiet: boolean }
  */
-export async function solve(question) {
-  const { question_stem, options, id } = question;
+export async function solve(question, { quiet = false } = {}) {
+  const { question_stem, options: opts, id } = question;
+  const log = quiet ? () => {} : console.log;
 
-  console.log(`\n[${id || 'Q'}] 開始解題...`);
+  log(`\n[${id || 'Q'}] 開始解題...`);
 
   // 步驟 1: 題型識別（規則比對，不用 LLM）
-  console.log('  1. 識別題型...');
-  const pattern = identifyQuestionType(question_stem, options);
-  console.log(`     題型: ${pattern?.description || '未知'}`);
+  log('  1. 識別題型...');
+  const pattern = identifyQuestionType(question_stem, opts);
+  log(`     題型: ${pattern?.description || '未知'}`);
 
   // 步驟 2: LLM 提取關鍵字 [LLM #1]
-  console.log('  2. LLM 提取關鍵字...');
+  log('  2. LLM 提取關鍵字...');
   const startExtract = performance.now();
   const extractResult = await llmExtractKeywords(question);
   const extractTime = performance.now() - startExtract;
-  console.log(`     提取 ${extractResult.keywords.length} 個關鍵字 (${(extractTime / 1000).toFixed(2)}s)`);
-  console.log(`     關鍵字: ${extractResult.keywords.slice(0, 8).join(', ')}${extractResult.keywords.length > 8 ? '...' : ''}`);
+  log(`     提取 ${extractResult.keywords.length} 個關鍵字 (${(extractTime / 1000).toFixed(2)}s)`);
+  log(`     關鍵字: ${extractResult.keywords.slice(0, 8).join(', ')}${extractResult.keywords.length > 8 ? '...' : ''}`);
 
   // 步驟 3: 平行 rg 檢索知識庫
-  console.log('  3. 平行 rg 檢索知識...');
+  log('  3. 平行 rg 檢索知識...');
   const startRg = performance.now();
 
-  // Debug: 顯示要搜尋的中文關鍵字
+  // 篩選中文關鍵字
   const chineseKeywords = extractResult.keywords.filter(kw => /[\u4e00-\u9fff]/.test(kw));
-  console.log(`     搜尋 ${chineseKeywords.length} 個中文關鍵字: ${chineseKeywords.slice(0, 5).join(', ')}...`);
+  log(`     搜尋 ${chineseKeywords.length} 個中文關鍵字: ${chineseKeywords.slice(0, 5).join(', ')}...`);
 
   const knowledge = await parallelRgSearch(chineseKeywords);
   const rgTime = performance.now() - startRg;
-  console.log(`     找到 ${knowledge.length} 條相關知識 (${rgTime.toFixed(0)}ms)`);
+  log(`     找到 ${knowledge.length} 條相關知識 (${rgTime.toFixed(0)}ms)`);
 
   // 步驟 4: 組裝上下文
-  console.log('  4. 組裝上下文...');
-  const prompt = assembleContext(pattern, knowledge, question_stem, options);
+  log('  4. 組裝上下文...');
+  const prompt = assembleContext(pattern, knowledge, question_stem, opts);
 
   // 步驟 5: 呼叫 LLM 解題 [LLM #2]
-  console.log('  5. LLM 解題推理...');
+  log('  5. LLM 解題推理...');
   const llmResponse = await callLLM(prompt);
-  console.log(`     回應時間: ${(llmResponse.responseTime / 1000).toFixed(2)}s`);
+  log(`     回應時間: ${(llmResponse.responseTime / 1000).toFixed(2)}s`);
 
   // 步驟 6: 解析答案
   const parsed = parseAnswer(llmResponse.content);
-  console.log(`     答案: ${parsed.answer}`);
+  log(`     答案: ${parsed.answer}`);
 
   return {
     questionId: id,
@@ -411,23 +462,51 @@ export async function solve(question) {
   };
 }
 
-export async function solveBatch(questions) {
-  const results = [];
+/**
+ * 平行解答所有題目
+ * 使用 Promise.all 同時處理，大幅提升速度
+ */
+export async function solveBatch(questions, { parallel = true } = {}) {
+  if (!parallel) {
+    // 序列模式（除錯用）
+    const results = [];
+    for (const question of questions) {
+      try {
+        const result = await solve(question);
+        results.push(result);
+      } catch (error) {
+        console.error(`題目 ${question.id} 解題失敗:`, error.message);
+        results.push({
+          questionId: question.id,
+          answer: 'ERROR',
+          reasoning: error.message,
+          error: true
+        });
+      }
+    }
+    return results;
+  }
 
-  for (const question of questions) {
+  // 平行模式
+  console.log(`\n開始平行處理 ${questions.length} 題...`);
+  const startTime = performance.now();
+
+  const promises = questions.map(async (question) => {
     try {
-      const result = await solve(question);
-      results.push(result);
+      return await solve(question, { quiet: true });
     } catch (error) {
-      console.error(`題目 ${question.id} 解題失敗:`, error.message);
-      results.push({
+      return {
         questionId: question.id,
         answer: 'ERROR',
         reasoning: error.message,
         error: true
-      });
+      };
     }
-  }
+  });
+
+  const results = await Promise.all(promises);
+  const totalTime = performance.now() - startTime;
+  console.log(`平行處理完成，總耗時: ${(totalTime / 1000).toFixed(2)}s\n`);
 
   return results;
 }
