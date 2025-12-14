@@ -28,6 +28,14 @@ const execAsync = promisify(exec);
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const SKILL_ROOT = join(__dirname, '..');
 const KNOWLEDGE_DIR = join(SKILL_ROOT, 'knowledge');
+const PROMPTS_DIR = join(SKILL_ROOT, 'prompts');
+
+// 模板 ID 對應 prompt 檔案
+const TEMPLATE_TO_PROMPT = {
+  'T-001': 'reasoning-character.md',
+  'T-002': 'reasoning-idiom.md',
+  'T-003': 'reasoning-literature.md'
+};
 
 // ======================
 // 載入環境變數
@@ -200,6 +208,31 @@ function identifyQuestionType(questionStem, options) {
 }
 
 // ======================
+// Prompt 載入
+// ======================
+
+/**
+ * 從 .md 檔案載入 prompt（跳過 header）
+ * @param {string} filename - prompts 目錄下的檔名
+ * @returns {string} prompt 內容
+ */
+function loadPrompt(filename) {
+  const filePath = join(PROMPTS_DIR, filename);
+  try {
+    const content = readFileSync(filePath, 'utf-8');
+    // 跳過 markdown header（--- 之前的內容）
+    const parts = content.split('---');
+    if (parts.length >= 3) {
+      return parts.slice(2).join('---').trim();
+    }
+    return content.trim();
+  } catch (e) {
+    console.warn(`無法載入 prompt: ${filename}`);
+    return null;
+  }
+}
+
+// ======================
 // 推理模板
 // ======================
 
@@ -218,8 +251,15 @@ function formatKnowledge(item) {
 }
 
 function assembleContext(pattern, knowledge, questionStem, options) {
-  const templates = loadJsonl('templates/reasoning.jsonl');
-  const template = templates.find(t => t.id === pattern?.template_id) || templates[0];
+  // 根據模板 ID 載入對應的 prompt 檔案
+  const templateId = pattern?.template_id || 'T-003';
+  const promptFile = TEMPLATE_TO_PROMPT[templateId] || 'reasoning-literature.md';
+  let promptTemplate = loadPrompt(promptFile);
+
+  // 如果載入失敗，使用預設的國學常識模板
+  if (!promptTemplate) {
+    promptTemplate = loadPrompt('reasoning-literature.md');
+  }
 
   const knowledgeText = knowledge.length > 0
     ? knowledge.map(k => formatKnowledge(k)).join('\n\n---\n\n')
@@ -227,7 +267,7 @@ function assembleContext(pattern, knowledge, questionStem, options) {
 
   const optionsText = options.join('\n');
 
-  let prompt = template.prompt_template
+  let prompt = promptTemplate
     .replace('{{knowledge}}', knowledgeText)
     .replace('{{question}}', questionStem)
     .replace('{{options}}', optionsText);
