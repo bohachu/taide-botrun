@@ -73,7 +73,11 @@ const CONFIG = {
 const KNOWLEDGE_FILES = [
   'character-forms.jsonl',
   'idioms.jsonl',
-  'literature.jsonl'
+  'literature.jsonl',
+  'rhetoric.jsonl',
+  'taiwanese-literature.jsonl',
+  'classical-texts.jsonl',
+  'grammar.jsonl'
 ];
 
 // ======================

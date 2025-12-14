@@ -1,22 +1,22 @@
 {
-  "timestamp": "2025-12-13T23:52:47.634Z",
+  "timestamp": "2025-12-14T00:18:05.052Z",
   "model": "google/gemma-3-12b-it",
   "version": "v3-llm-extraction",
-  "totalQuestions": 5,
-  "correct": 5,
+  "totalQuestions": 10,
+  "correct": 10,
   "wrong": 0,
   "error": 0,
   "accuracy": 100,
   "timing": {
-    "totalExtractTime": 52845.127583999994,
-    "totalRgTime": 205.85495700000502,
-    "totalLLMTime": 3436.461709000012
+    "totalExtractTime": 91723.51578999999,
+    "totalRgTime": 871.3384170000008,
+    "totalLLMTime": 8184.495081999981
   },
   "results": [
     {
       "questionId": "CH-001",
       "answer": "C",
-      "reasoning": "答案：C\n\n理由：\nA: 「勵」行節約 (錯)→「厲」行節約(對)；再「厲」害也不過如此 (對)。因此A選項不完全正確。\nB: 「蜂」湧而至 (錯)→「蜂」擁而至(對)；「鋒」芒畢露 (對)。因此B選項不完全正確。\nC: 「賑」災濟貧 (對)；「振」聾發聵 (對)。因此C選項完全正確。\nD: 「弊」絕風清 (對)；「蔽」害百姓 (錯)→「弊」害百姓(對)。因此D選項不完全正確。\n",
+      "reasoning": "答案：C\n\n理由：\nA: 「勵」行節約 (錯)→「厲」行節約(對)；再「厲」害也不過如此 (對)。因此A選項不完全正確。\nB: 「蜂」湧而至 (錯)→「蜂」擁而至(對)；「鋒」芒畢露 (對)。因此B選項不完全正確。\nC: 「賑」災濟貧 (對)；「振」聾發聵 (對)。因此C選項完全正確。\nD: 「弊」絕風清 (對)；「蔽」害百姓 (錯)→「弊」害百姓(對)。因此D選項不完全正確。",
       "pattern": "P-001",
       "extractedKeywords": [
         "勵",
@@ -31,15 +31,15 @@
       ],
       "knowledgeCount": 5,
       "promptLength": 1374,
-      "extractTime": 9973.928291999999,
-      "rgTime": 31.961708000000726,
-      "responseTime": 591.4292919999989,
-      "totalTime": 10597.319291999998,
+      "extractTime": 8985.718291,
+      "rgTime": 48.693083000000115,
+      "responseTime": 806.3592499999995,
+      "totalTime": 9840.770623999999,
       "usage": {
         "prompt_tokens": 1098,
-        "completion_tokens": 153,
-        "total_tokens": 1251,
-        "cost": 0.00006381,
+        "completion_tokens": 152,
+        "total_tokens": 1250,
+        "cost": 0.00006368,
         "is_byok": false,
         "prompt_tokens_details": {
           "cached_tokens": 0,
@@ -49,7 +49,7 @@
         "cost_details": {
           "upstream_inference_cost": null,
           "upstream_inference_prompt_cost": 0.00004392,
-          "upstream_inference_completions_cost": 0.00001989
+          "upstream_inference_completions_cost": 0.00001976
         },
         "completion_tokens_details": {
           "reasoning_tokens": 0,
@@ -60,7 +60,7 @@
     {
       "questionId": "CH-003",
       "answer": "D",
-      "reasoning": "\n答案：D\n\n理由：\n- A: 成語1=磬竹難書(錯，應為罄竹難書)，成語2=罄竹難書(對)，因此A錯誤。\n- B: 成語1=貌和神離(錯，應為貌合神離)，成語2=貌合神離(對)，因此B錯誤。\n- C: 成語1=挺而走險(錯，應為鋌而走險)，成語2=鋌而走險(對)，因此C錯誤。\n- D: 成語1=直接了當(可接受，異體字)，成語2=直截了當(對)，因此D正確。雖然「直接了當」是異體字，但學測成語題視為可接受，且「直截了當」是標準寫法，故D選項兩個成語皆正確。",
+      "reasoning": "\n答案：D\n\n理由：\n- A: 成語1=磬竹難書(錯，應為罄竹難書)，成語2=罄竹難書(對)，因此A錯誤。\n- B: 成語1=貌和神離(錯，應為貌合神離)，成語2=貌合神離(對)，因此B錯誤。\n- C: 成語1=挺而走險(錯，應為鋌而走險)，成語2=鋌而走險(對)，因此C錯誤。\n- D: 成語1=直接了當(可接受，異體字)，成語2=直截了當(對)，因此D正確。雖然「直接了當」是異體字，但學測成語題中可接受，且「直截了當」是標準寫法，故D選項兩個成語皆正確。",
       "pattern": "P-002",
       "extractedKeywords": [
         "成語",
@@ -72,29 +72,29 @@
         "鋌而走險",
         "直接了當",
         "直截了當",
-        "字形"
+        "形近字"
       ],
-      "knowledgeCount": 9,
-      "promptLength": 2205,
-      "extractTime": 3918.170875,
-      "rgTime": 29.13370799999757,
-      "responseTime": 678.5972920000022,
-      "totalTime": 4625.901875,
+      "knowledgeCount": 4,
+      "promptLength": 1343,
+      "extractTime": 4032.5899169999993,
+      "rgTime": 63.340540999997756,
+      "responseTime": 876.9154579999995,
+      "totalTime": 4972.845915999997,
       "usage": {
-        "prompt_tokens": 1779,
-        "completion_tokens": 200,
-        "total_tokens": 1979,
-        "cost": 0.00007337,
+        "prompt_tokens": 1073,
+        "completion_tokens": 199,
+        "total_tokens": 1272,
+        "cost": 0.00005884,
         "is_byok": false,
         "prompt_tokens_details": {
-          "cached_tokens": 16,
+          "cached_tokens": 0,
           "audio_tokens": 0,
           "video_tokens": 0
         },
         "cost_details": {
           "upstream_inference_cost": null,
-          "upstream_inference_prompt_cost": 0.00005337,
-          "upstream_inference_completions_cost": 0.00002
+          "upstream_inference_prompt_cost": 0.00004292,
+          "upstream_inference_completions_cost": 0.00001592
         },
         "completion_tokens_details": {
           "reasoning_tokens": 0,
@@ -105,7 +105,7 @@
     {
       "questionId": "LK-001",
       "answer": "C",
-      "reasoning": "答案：C\n\n理由：\n1. 排除：\n    * A：選項中「三蘇」被視為一個整體，但實際上宋代六家應為歐陽脩、蘇洵、蘇軾、蘇轍、曾鞏、王安石。\n    * B：選項錯誤地將「三蘇」描述為三兄弟，而知識庫明確指出他們是父子關係。\n    * D：選項錯誤地說八大家皆以駢文見長，知識庫指出他們提倡散文，反對駢文。\n\n2. 選擇：選項C的描述完全符合知識庫中的資訊：「此名稱始於明代朱右《八先生文集》，明末茅坤《唐宋八大家文鈔》使之流行」。因此，C是正確的敘述。",
+      "reasoning": "答案：C\n\n理由：\n1. 排除：\n    * A：宋代六家中，應為歐陽脩、蘇洵、蘇軾、蘇轍、曾鞏、王安石，選項中「三蘇」不精確。\n    * B：知識庫明確指出「三蘇」是父子關係，而非兄弟，且「一門三學士」並非官方稱呼。\n    * D：知識庫明確指出八大家提倡散文，反對駢文，選項敘述相反。\n\n2. 選擇：\n    * 知識庫中明確指出「此名稱始於明代朱右《八先生文集》，明末茅坤《唐宋八大家文鈔》使之流行」，選項C完全符合。\n",
       "pattern": "P-003",
       "extractedKeywords": [
         "唐宋八大家",
@@ -130,17 +130,17 @@
         "宋代六家",
         "父子"
       ],
-      "knowledgeCount": 3,
-      "promptLength": 2255,
-      "extractTime": 14203.485125,
-      "rgTime": 45.280209000004106,
-      "responseTime": 308.33629199999996,
-      "totalTime": 14557.101626000003,
+      "knowledgeCount": 4,
+      "promptLength": 2689,
+      "extractTime": 11368.716499999999,
+      "rgTime": 86.75500000000466,
+      "responseTime": 292.1080839999995,
+      "totalTime": 11747.579584000003,
       "usage": {
-        "prompt_tokens": 1861,
-        "completion_tokens": 179,
-        "total_tokens": 2040,
-        "cost": 0.00009771,
+        "prompt_tokens": 2255,
+        "completion_tokens": 171,
+        "total_tokens": 2426,
+        "cost": 0.00011243,
         "is_byok": false,
         "prompt_tokens_details": {
           "cached_tokens": 0,
@@ -149,8 +149,8 @@
         },
         "cost_details": {
           "upstream_inference_cost": null,
-          "upstream_inference_prompt_cost": 0.00007444,
-          "upstream_inference_completions_cost": 0.00002327
+          "upstream_inference_prompt_cost": 0.0000902,
+          "upstream_inference_completions_cost": 0.00002223
         },
         "completion_tokens_details": {
           "reasoning_tokens": 0,
@@ -161,7 +161,7 @@
     {
       "questionId": "LK-002",
       "answer": "C",
-      "reasoning": "答案：C\n\n理由：\n1. 排除：\n    * B：選項提到「七子」之稱始於曹操《典論·論文》，這是錯誤的，應是曹丕。\n    * D：選項提到建安二十二年瘟疫導致五人罹難，但知識庫指出孔融被曹操處死，阮瑀早病逝，王粲死因有爭議，並非全員死於瘟疫。\n\n2. 選擇：\n    * C：選項描述了王粲的成就和詩歌特點，與知識庫中的描述完全一致：「王粲擅長詩賦，被譽為「七子之冠冕」，其詩歌抒情性強，號稱兼善」。因此，C選項是正確的。",
+      "reasoning": "答案：C\n\n理由：\n1. 排除：\n    * B：選項提到「七子」之稱始於曹操《典論·論文》，但根據知識庫，「七子」之稱始於曹丕《典論·論文》，因此選項B錯誤。\n    * A：選項描述建安七子的成員正確，且與三曹並稱建安文學代表，但這屬於基本知識，不如選項C更深入。\n    * D：選項提到建安二十二年北方大瘟疫，除孔融、阮瑀早逝外，其餘五人全數罹難。但根據知識庫，孔融是被曹操處死，阮瑀早病逝，王粲死因有爭議，徐幹、應瑒、劉楨死於瘟疫，因此選項D錯誤。\n\n2. 選擇：\n    * C：選項提到王粲擅長詩賦，被譽為「七子之冠冕」，其詩歌抒情性強，號稱兼善。這與知識庫中關於王粲的描述完全一致，且「七子之冠冕」是更深層次的文學評價，符合出題者期望的考點。",
       "pattern": "P-004",
       "extractedKeywords": [
         "建安七子",
@@ -180,37 +180,36 @@
         "曹植",
         "典論",
         "論文",
-        "建安文學",
         "詩賦",
         "七子之冠冕",
         "抒情",
         "建安二十二年",
-        "瘟疫",
-        "建安七子成員",
-        "孔融、阮瑀",
-        "其他五人"
+        "建安文學",
+        "建安七子的命名",
+        "王粲的文學風格",
+        "建安七子的生卒"
       ],
-      "knowledgeCount": 3,
-      "promptLength": 2271,
-      "extractTime": 8388.809417000004,
-      "rgTime": 53.17491600000358,
-      "responseTime": 1024.5897499999992,
-      "totalTime": 9466.574083000007,
+      "knowledgeCount": 6,
+      "promptLength": 3272,
+      "extractTime": 14212.818207999997,
+      "rgTime": 109.92212499999732,
+      "responseTime": 933.3604170000035,
+      "totalTime": 15256.100749999998,
       "usage": {
-        "prompt_tokens": 1878,
-        "completion_tokens": 168,
-        "total_tokens": 2046,
-        "cost": 0.00007314,
+        "prompt_tokens": 2724,
+        "completion_tokens": 261,
+        "total_tokens": 2985,
+        "cost": 0.00010782,
         "is_byok": false,
         "prompt_tokens_details": {
-          "cached_tokens": 653,
+          "cached_tokens": 5,
           "audio_tokens": 0,
           "video_tokens": 0
         },
         "cost_details": {
           "upstream_inference_cost": null,
-          "upstream_inference_prompt_cost": 0.00005634,
-          "upstream_inference_completions_cost": 0.0000168
+          "upstream_inference_prompt_cost": 0.00008172,
+          "upstream_inference_completions_cost": 0.0000261
         },
         "completion_tokens_details": {
           "reasoning_tokens": 0,
@@ -221,7 +220,7 @@
     {
       "questionId": "LK-003",
       "answer": "C",
-      "reasoning": "答案：C\n\n理由：\n1. 排除：選項C：「七人皆主張老莊之學，「越名教而任自然」，在政治態度上完全一致」是錯誤的。根據「相關知識」中的「思想傾向(不同！)」和「政治態度(嚴重分歧！)」部分，竹林七賢在思想傾向上並非完全一致，山濤、王戎好老莊而雜以儒術，向秀主張名教與自然合一。更重要的是，他們的政治態度有嚴重分歧，山濤、王戎投靠司馬氏政權，嵇康則不合作最終被殺，阮籍佯狂避世。因此，選項C的後半句「在政治態度上完全一致」是明顯錯誤的。\n2. 選擇：其他選項均符合「相關知識」中的描述：\n    * A：成員和活動年代正確。\n    * B：嵇康的琴藝和著作正確。\n    * D：阮咸的身份和樂器正確。\n",
+      "reasoning": "答案：C\n\n理由：\n1. 排除：選項C敘述「七人皆主張老莊之學，「越名教而任自然」，在政治態度上完全一致」是錯誤的。根據「相關知識」中的「思想傾向(不同！)」和「政治態度(嚴重分歧！)」可知，竹林七賢在思想上並非完全一致，山濤、王戎好老莊而雜以儒術，向秀主張名教與自然合一。更重要的是，他們的政治態度有嚴重分歧，山濤、王戎投靠司馬氏政權，嵇康則不合作被殺，阮籍佯狂避世。因此，選項C的後半句「在政治態度上完全一致」是明顯錯誤的。\n2. 選擇：選項A、B、D均與「相關知識」中的描述相符。A選項正確列出了竹林七賢的成員，並指出其活動時期。B選項正確指出嵇康的著作。D選項正確說明阮咸與阮籍的關係以及「阮琴」的由來。因此，錯誤的選項是C。",
       "pattern": "P-005",
       "extractedKeywords": [
         "竹林七賢",
@@ -236,24 +235,31 @@
         "琴賦",
         "養生論",
         "與山巨源絕交書",
-        "古琴演奏",
+        "古琴",
         "老莊之學",
-        "越名教而任自然",
+        "道家",
+        "自然主義",
+        "越名教",
+        "儒家",
+        "名教",
+        "任自然",
         "政治態度",
         "阮琴",
-        "音律"
+        "音律",
+        "政治態度一致",
+        "政治態度不一致"
       ],
-      "knowledgeCount": 3,
-      "promptLength": 2255,
-      "extractTime": 16360.73387499999,
-      "rgTime": 46.30441599999904,
-      "responseTime": 833.5090830000117,
-      "totalTime": 17240.547374,
+      "knowledgeCount": 4,
+      "promptLength": 2689,
+      "extractTime": 8909.145958000001,
+      "rgTime": 121.20504200000141,
+      "responseTime": 799.3607919999995,
+      "totalTime": 9829.711792000002,
       "usage": {
-        "prompt_tokens": 1854,
-        "completion_tokens": 223,
-        "total_tokens": 2077,
-        "cost": 0.00021522,
+        "prompt_tokens": 2248,
+        "completion_tokens": 244,
+        "total_tokens": 2492,
+        "cost": 0.00012164,
         "is_byok": false,
         "prompt_tokens_details": {
           "cached_tokens": 0,
@@ -262,8 +268,273 @@
         },
         "cost_details": {
           "upstream_inference_cost": null,
-          "upstream_inference_prompt_cost": 0.00014832,
-          "upstream_inference_completions_cost": 0.0000669
+          "upstream_inference_prompt_cost": 0.00008992,
+          "upstream_inference_completions_cost": 0.00003172
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "image_tokens": 0
+        }
+      }
+    },
+    {
+      "questionId": "TW-001",
+      "answer": "A",
+      "reasoning": "答案：A\n\n理由：\n*   **A:** 「一」桿「稱」仔：正確。賴和的代表作確實是《一桿稱仔》，且內容描寫菜農秦得參遭日本警察欺壓的故事。\n*   **B:** 「羅」漫「主」義：錯誤。賴和的文學風格是寫實主義，而非浪漫主義。\n*   **C:** 古「典」詩「詞」：錯誤。賴和雖擅長古典詩，但更以推動白話文創作著稱，並非以古典詩詞為主。\n*   **D:** 「亞」細「亞」的孤兒：錯誤。《亞細亞的孤兒》是吳濁流的作品，而非賴和的作品。",
+      "pattern": "P-001",
+      "extractedKeywords": [
+        "台灣文學之父",
+        "賴和",
+        "一桿稱仔",
+        "秦得參",
+        "日本警察",
+        "日治時期",
+        "浪漫主義",
+        "台灣人民",
+        "身分認同困境",
+        "古典詩詞",
+        "白話文",
+        "小說創作",
+        "亞細亞的孤兒",
+        "殖民統治",
+        "悲劇",
+        "欺壓"
+      ],
+      "knowledgeCount": 2,
+      "promptLength": 1122,
+      "extractTime": 10141.664875000002,
+      "rgTime": 89.26229099999182,
+      "responseTime": 588.7338329999911,
+      "totalTime": 10819.660998999985,
+      "usage": {
+        "prompt_tokens": 869,
+        "completion_tokens": 166,
+        "total_tokens": 1035,
+        "cost": 0.00005634,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": null,
+          "upstream_inference_prompt_cost": 0.00003476,
+          "upstream_inference_completions_cost": 0.00002158
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "image_tokens": 0
+        }
+      }
+    },
+    {
+      "questionId": "RH-001",
+      "answer": "C",
+      "reasoning": "\n\n答案：C\n\n理由：\nA: 人生如夢，一尊還酹江月。 “如”是明喻的比喻詞，因此A選項使用明喻，錯誤。\nB: 我是天空裡的一片雲，偶爾投影在你的波心。“是”連接喻體和喻依，且沒有比喻詞，因此B選項使用暗喻，正確。\nC: 母親是我避風的港灣。“是”連接喻體和喻依，且沒有比喻詞，因此C選項使用暗喻，正確。\nD: 時間如同白駒過隙。“如同”是明喻的比喻詞，因此D選項使用明喻，錯誤。\n\n因此，只有C選項使用暗喻修辭法。",
+      "pattern": "P-001",
+      "extractedKeywords": [
+        "暗喻",
+        "修辭",
+        "比喻",
+        "人生如夢",
+        "還酹",
+        "酒",
+        "江月",
+        "人生哲理",
+        "天空",
+        "雲",
+        "波心",
+        "意象",
+        "母親",
+        "港灣",
+        "母愛",
+        "時間",
+        "白駒",
+        "過隙",
+        "時間流逝",
+        "我是天空裡的一片雲",
+        "母親是我避風的港灣",
+        "時間如同白駒過隙"
+      ],
+      "knowledgeCount": 2,
+      "promptLength": 1151,
+      "extractTime": 6618.289708000011,
+      "rgTime": 88.96804199999315,
+      "responseTime": 806.2119160000002,
+      "totalTime": 7513.4696660000045,
+      "usage": {
+        "prompt_tokens": 906,
+        "completion_tokens": 164,
+        "total_tokens": 1070,
+        "cost": 0.00004936,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": null,
+          "upstream_inference_prompt_cost": 0.00003624,
+          "upstream_inference_completions_cost": 0.00001312
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "image_tokens": 0
+        }
+      }
+    },
+    {
+      "questionId": "LK-004",
+      "answer": "C",
+      "reasoning": "\n\n答案：C\n\n理由：\n*   **A:** 「王楊盧駱」排序正確，但選項說「四人皆無異議」，這是錯誤的，因為楊炯不服此排序。所以A錯。\n*   **B:** 王勃《滕王閣序》與駱賓王《討武曌檄》並稱「駢文雙壁」是正確的，但選項說「展現初唐駢文成就」，駢文是初唐四傑反對的，他們是扭轉了駢文，所以B錯。\n*   **C:** 四傑詩歌扭轉齊梁宮體浮華風氣，將題材擴展至江河山川、邊塞江漠，這完全符合「初唐四傑」的文學貢獻，所以C對。\n*   **D:** 裴行儉預言四傑「皆享爵祿，必得善終」，這是與「初唐四傑」的結局完全相反的錯誤，因為裴行儉預言他們不得善終，所以D錯。",
+      "pattern": "P-001",
+      "extractedKeywords": [
+        "初唐四傑",
+        "王勃",
+        "楊炯",
+        "盧照鄰",
+        "駱賓王",
+        "王楊盧駱",
+        "滕王閣序",
+        "討武曌檄",
+        "駢文",
+        "雙壁",
+        "駢文成就",
+        "題材",
+        "江河山川",
+        "邊塞江漠",
+        "宮體",
+        "詩歌風格",
+        "裴行儉",
+        "爵祿",
+        "善終",
+        "官運",
+        "四傑排序",
+        "初唐詩歌",
+        "裴行儉預言",
+        "四傑仕途"
+      ],
+      "knowledgeCount": 4,
+      "promptLength": 2462,
+      "extractTime": 9621.666165999995,
+      "rgTime": 123.25545900000725,
+      "responseTime": 1152.1563329999917,
+      "totalTime": 10897.077957999994,
+      "usage": {
+        "prompt_tokens": 2099,
+        "completion_tokens": 239,
+        "total_tokens": 2338,
+        "cost": 0.00008687,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 5,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": null,
+          "upstream_inference_prompt_cost": 0.00006297,
+          "upstream_inference_completions_cost": 0.0000239
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "image_tokens": 0
+        }
+      }
+    },
+    {
+      "questionId": "C15-001",
+      "answer": "B",
+      "reasoning": "\n\n答案：B\n\n理由：\n*   **B:** 「初」極狹／「土地」平曠 - 「初極狹」與「土地平曠」形成空間的對比，符合「欲揚先抑」在同一維度上形成對比的原則，因此「初」和「土地」都正確。\n*   **A:** 「林」盡水源／「豁」然開朗 - 兩者是時間上的順序，而非空間的抑揚對比，因此「林」是錯的。\n*   **C:** 「彷」彿若有光／「屋」舍儼然 - 兩者是虛實的差異，而非空間的抑揚對比，因此「彷」是錯的。\n*   **D:** 「才」通人／「良」田美池 - 兩者是景物的落差，而非空間的抑揚對比，因此「才」是錯的。",
+      "pattern": "P-001",
+      "extractedKeywords": [
+        "陶淵明",
+        "東晉",
+        "桃花源記",
+        "欲揚先抑",
+        "修辭手法",
+        "林盡水源",
+        "豁然開朗",
+        "空間轉換",
+        "初極狹",
+        "土地平曠",
+        "視野對比",
+        "彷彿若有光",
+        "屋舍儼然",
+        "虛實差異",
+        "才通人",
+        "良田美池",
+        "景物落差"
+      ],
+      "knowledgeCount": 1,
+      "promptLength": 863,
+      "extractTime": 10255.486917000002,
+      "rgTime": 66.12658399999782,
+      "responseTime": 827.1453330000077,
+      "totalTime": 11148.758834000007,
+      "usage": {
+        "prompt_tokens": 670,
+        "completion_tokens": 206,
+        "total_tokens": 876,
+        "cost": 0.0000407,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 29,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": null,
+          "upstream_inference_prompt_cost": 0.0000201,
+          "upstream_inference_completions_cost": 0.0000206
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "image_tokens": 0
+        }
+      }
+    },
+    {
+      "questionId": "CL-001",
+      "answer": "A",
+      "reasoning": "\n答案：A\n\n理由：\nA: 公將鼓之（《曹劌論戰》） - 「之」在此指代齊軍，是代詞用法，與「學而時習之」的「之」字相同，都是指代所學知識或事物。因此，兩個字都正確。\nB: 久之，目似瞑（《狼》） - 「之」在此是音節助詞，表示時間的經過，與「學而時習之」不同。因此，此選項錯誤。\nC: 何陋之有（《陋室銘》） - 「之」在此是提賓標誌，賓語倒裝，與「學而時習之」不同。因此，此選項錯誤。\nD: 送孟浩然之廣陵（李白詩） - 「之」在此是動詞，表示「去、往」，與「學而時習之」不同。因此，此選項錯誤。",
+      "pattern": "P-001",
+      "extractedKeywords": [
+        "之",
+        "學而時習之",
+        "曹劌論戰",
+        "賓語",
+        "狼",
+        "助詞",
+        "陋室銘",
+        "虛詞",
+        "李白",
+        "廣陵",
+        "代詞"
+      ],
+      "knowledgeCount": 15,
+      "promptLength": 4721,
+      "extractTime": 7577.419249999992,
+      "rgTime": 73.81025000000955,
+      "responseTime": 1102.143665999989,
+      "totalTime": 8753.37316599999,
+      "usage": {
+        "prompt_tokens": 3955,
+        "completion_tokens": 209,
+        "total_tokens": 4164,
+        "cost": 0.00013955,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 30,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": null,
+          "upstream_inference_prompt_cost": 0.00011865,
+          "upstream_inference_completions_cost": 0.0000209
         },
         "completion_tokens_details": {
           "reasoning_tokens": 0,
